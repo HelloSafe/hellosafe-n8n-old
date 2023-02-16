@@ -1,0 +1,63 @@
+{
+    "name": "n8n",
+    "description": "deploy n8n to heroku without any hassle",
+    "keywords": [
+      "n8n",
+      "node",
+      "automation"
+    ],
+    "website": "https://n8n.io",
+    "repository": "https://github.com/n8n-io/n8n-heroku",
+    "logo": "https://raw.githubusercontent.com/n8n-io/n8n-heroku/main/n8n_logo.png",
+    "success_url": "/",
+    "stack": "container",
+    "env": {
+      "GENERIC_TIMEZONE": {
+        "description": "Time Zone to use with Heroku. You can find the name of your timezone for example here: https://momentjs.com/timezone/.",
+        "value": "Europe/Berlin"
+      },
+      "N8N_ENCRYPTION_KEY": {
+        "description": "Set the n8n encryption key to a static value to avoid Heroku overriding it (causing authentication to fail).",
+        "value": "change-me-to-something-else"
+      },
+      "WEBHOOK_URL": {
+        "description": "Replace <appname> with your Heroku application name. This will ensure the correct webhook URLs are being shown in n8n.",
+        "value": "https://<appname>.herokuapp.com"
+      },
+      "N8N_DB_TYPE": {
+        "description": "Database type",
+        "value": "mariadb"
+      },
+      "N8N_DB_HOST": {
+        "description": "Database host",
+        "value": "xxx.eu-west-1.rds.amazonaws.com"
+      },
+      "N8N_DB_PORT": {
+        "description": "Database port",
+        "value": "3306"
+      },
+      "N8N_DB_DATABASE": {
+        "description": "Database name",
+        "value": "hellosafe-n8n"
+      },
+      "N8N_DB_USER": {
+        "description": "Database user",
+        "value": "admin"
+      },
+      "N8N_DB_PASSWORD": {
+        "description": "Database password",
+        "value": "xxx"
+      }
+    },
+    "formation": {
+      "web": {
+        "quantity": 1,
+        "size": "hobby"
+      }
+    },
+    "addons": [
+      {
+        "plan": "papertrail:choklad"
+      }
+    ]
+  }

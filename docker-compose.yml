@@ -1,0 +1,45 @@
+version: '3'
+services:
+    n8n:
+        container_name: hellosafe_n8n
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '${APP_PORT:-8118}:5678'
+        env_file:
+            - .env
+        networks:
+            - hellosafe-n8n-network
+        depends_on:
+            - mariadb
+    mariadb:
+        container_name: hellosafe_n8n_database
+        image: 'mariadb:10'
+        ports:
+            - '${FORWARD_DB_PORT:-3316}:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: '${N8N_DB_PASSWORD}'
+            MYSQL_ROOT_HOST: "%"
+            MYSQL_DATABASE: '${N8N_DB_DATABASE}'
+            MYSQL_USER: '${N8N_DB_USER}'
+            MYSQL_PASSWORD: '${N8N_DB_PASSWORD}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        env_file:
+            - .env
+        volumes:
+            - 'hellosafe-n8n-mariadb:/var/lib/mysql'
+        networks:
+            - hellosafe-n8n-network
+        healthcheck:
+            test: [ "CMD", "mysqladmin", "ping", "-p${N8N_DB_PASSWORD}" ]
+            retries: 3
+            timeout: 5s
+networks:
+    hellosafe-n8n-network:
+        driver: bridge
+volumes:
+    hellosafe-n8n-mariadb:
+        driver: local
