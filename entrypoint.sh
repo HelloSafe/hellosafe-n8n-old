@@ -10,7 +10,5 @@ export DB_MYSQLDB_PORT=$N8N_DB_PORT
 export DB_MYSQLDB_USER=$N8N_DB_USER
 export DB_MYSQLDB_PASSWORD=$N8N_DB_PASSWORD
 
-# Set the logging level to 'debug'
-export N8N_LOG_LEVEL=debug
 # kickstart nodemation
 n8n
