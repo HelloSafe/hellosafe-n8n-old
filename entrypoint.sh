@@ -10,9 +10,6 @@ export DB_MYSQLDB_PORT=$N8N_DB_PORT
 export DB_MYSQLDB_USER=$N8N_DB_USER
 export DB_MYSQLDB_PASSWORD=$N8N_DB_PASSWORD
 
-# Activates automatic data pruning
-export EXECUTIONS_DATA_PRUNE=true
-
 echo "export database configuration completed"
 # kickstart nodemation
 n8n
