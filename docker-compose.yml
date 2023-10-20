@@ -14,32 +14,29 @@ services:
         networks:
             - hellosafe-n8n-network
         depends_on:
-            - mariadb
-    mariadb:
+            - postgres
+    postgres:
         container_name: hellosafe_n8n_database
-        image: 'mariadb:10'
+        image: 'postgres:latest'
         ports:
-            - '${FORWARD_DB_PORT:-3316}:3306'
+            - '${FORWARD_DB_PORT:-5432}:5432'
         environment:
-            MYSQL_ROOT_PASSWORD: '${N8N_DB_PASSWORD}'
-            MYSQL_ROOT_HOST: "%"
-            MYSQL_DATABASE: '${N8N_DB_DATABASE}'
-            MYSQL_USER: '${N8N_DB_USER}'
-            MYSQL_PASSWORD: '${N8N_DB_PASSWORD}'
-            MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+            POSTGRES_PASSWORD: '${N8N_DB_PASSWORD}'
+            POSTGRES_DB: '${N8N_DB_DATABASE}'
+            POSTGRES_USER: '${N8N_DB_USER}'
         env_file:
             - .env
         volumes:
-            - 'hellosafe-n8n-mariadb:/var/lib/mysql'
+            - 'hellosafe-n8n-postgres-2:/var/lib/postgresql/data'
         networks:
             - hellosafe-n8n-network
         healthcheck:
-            test: [ "CMD", "mysqladmin", "ping", "-p${N8N_DB_PASSWORD}" ]
+            test: [ "CMD", "pg_isready", "-U", "${N8N_DB_USER}", "-d", "${N8N_DB_DATABASE}" ]
             retries: 3
             timeout: 5s
 networks:
     hellosafe-n8n-network:
         driver: bridge
 volumes:
-    hellosafe-n8n-mariadb:
+    hellosafe-n8n-postgres-2:
         driver: local
