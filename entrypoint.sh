@@ -12,6 +12,27 @@ export DB_POSTGRESDB_DATABASE=$N8N_DB_DATABASE
 export DB_POSTGRESDB_USER=$N8N_DB_USER
 export DB_POSTGRESDB_PASSWORD=$N8N_DB_PASSWORD
 
+# Save executions ending in errors
+export EXECUTIONS_DATA_SAVE_ON_ERROR=all
+
+# Save successful executions
+export EXECUTIONS_DATA_SAVE_ON_SUCCESS=all
+
+# Don't save node progress for each execution
+export EXECUTIONS_DATA_SAVE_ON_PROGRESS=false
+
+# Don't save manually launched executions
+export EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS=false
+
+# Activate automatic data pruning
+export EXECUTIONS_DATA_PRUNE=true
+
+# Number of hours after execution that n8n deletes data
+export EXECUTIONS_DATA_MAX_AGE=168
+
+# Number of executions to store
+export EXECUTIONS_DATA_PRUNE_MAX_COUNT=50000
+
 echo "export database configuration completed"
 # kickstart nodemation
 n8n
