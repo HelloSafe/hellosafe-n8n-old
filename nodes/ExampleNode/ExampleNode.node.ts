@@ -16,6 +16,7 @@ export class ExampleNode implements INodeType {
 		defaults: {
 			name: 'Example Node test',
 		},
+		icon: "file:hellosafe.svg",
 		inputs: ['main'],
 		outputs: ['main'],
 		properties: [

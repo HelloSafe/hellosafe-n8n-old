@@ -13,7 +13,7 @@ export const nodeDescription: INodeTypeDescription = {
 		name: "Puppeteer",
 		color: "#125580",
 	},
-	icon: "file:puppeteer.svg",
+	icon: "file:hellosafe.svg",
 	inputs: ["main"],
 	outputs: ["main"],
 	properties: [
