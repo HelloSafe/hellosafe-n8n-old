@@ -19,7 +19,8 @@ You need the following installed on your development machine:
 ## Usage
 1. docker compose up -d
 2. npm install
-3. npm run dev
+3. npm run build <-- run at least once to copy the icons
+4. npm run dev
 4. go to http://localhost:8118, try ExampleNode, adjust nodes/ExampleNode/..., refresh the page etc.
 
 

@@ -8,13 +8,13 @@ import {
 
 export class ExampleNode implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Example Node final',
+		displayName: 'Example Node test',
 		name: 'exampleNode',
 		group: ['transform'],
 		version: 1,
-		description: 'Basic Example Node final',
+		description: 'Basic Example Node test',
 		defaults: {
-			name: 'Example Node final',
+			name: 'Example Node test',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
