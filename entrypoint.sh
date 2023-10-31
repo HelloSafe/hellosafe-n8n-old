@@ -33,6 +33,12 @@ export EXECUTIONS_DATA_MAX_AGE=168
 # Number of executions to store
 export EXECUTIONS_DATA_PRUNE_MAX_COUNT=50000
 
+# check if env mode is dev or prod if prod then set the following
+if [ "$NODE_ENV" == "production" ]; then
+  export DB_POSTGRESDB_SSL_CA=/home/node/rds-ca-2019-root.pem
+  export DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED=false
+fi
+
 echo "export database configuration completed"
 # kickstart nodemation
 n8n
