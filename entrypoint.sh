@@ -37,8 +37,8 @@ export EXECUTIONS_DATA_PRUNE_MAX_COUNT=50000
 if [ "$NODE_ENV" == "production" ]; then
   export DB_POSTGRESDB_SSL_CA=/home/node/rds-ca-2019-root.pem
   export DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED=false
+  n8n
+else
+  nodemon --watch /root/.n8n/custom --exec n8n start
 fi
 
-echo "export database configuration completed"
-# kickstart nodemation
-n8n

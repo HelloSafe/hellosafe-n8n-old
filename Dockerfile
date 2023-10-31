@@ -23,9 +23,6 @@ RUN apk add --no-cache \
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
-# Install n8n-nodes-puppeteer
-RUN mkdir -p /root/.n8n/nodes && cd /root/.n8n/nodes && npm install n8n-nodes-puppeteer && npm install n8n-nodes-puppeteer-extended
-
 # Install fonts
 RUN apk --no-cache add --virtual fonts msttcorefonts-installer fontconfig && \
 	update-ms-fonts && \
@@ -33,5 +30,14 @@ RUN apk --no-cache add --virtual fonts msttcorefonts-installer fontconfig && \
 	apk del fonts && \
 	find  /usr/share/fonts/truetype/msttcorefonts/ -type l -exec unlink {} \; \
 	&& rm -rf /tmp/* /var/cache/apk/*
+
+RUN npm install -g nodemon
+RUN npm install -g puppeteer puppeteer-extra puppeteer-extra-plugin-stealth 
+
+COPY ./dist /root/.n8n/custom
+
+COPY ./assets /root/assets
+
+WORKDIR /root/
 
 CMD ["/entrypoint.sh"]
