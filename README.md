@@ -21,3 +21,7 @@ You need the following installed on your development machine:
 2. npm install
 3. npm run dev
 4. go to http://localhost:8118, try ExampleNode, adjust nodes/ExampleNode/..., refresh the page etc.
+
+
+## To improve
+1. changing .env.local / .env require to restart docker container to take effect
