@@ -34,10 +34,10 @@ RUN apk --no-cache add --virtual fonts msttcorefonts-installer fontconfig && \
 RUN npm install -g nodemon typescript
 RUN npm install -g puppeteer puppeteer-extra puppeteer-extra-plugin-stealth 
 
-COPY ./ /root/app
+COPY ./ /root
 
-WORKDIR /root/app
+WORKDIR /root
 
-RUN npm install && npm run build && mkdir /root/.n8n && cp -R /root/app/dist /root/.n8n/custom 
+RUN npm install && npm run build && mkdir /root/.n8n && cp -R /root/dist /root/.n8n/custom 
 
 CMD ["/entrypoint.sh"]
