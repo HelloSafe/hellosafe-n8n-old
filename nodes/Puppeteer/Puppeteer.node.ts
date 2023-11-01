@@ -1,4 +1,3 @@
-import { IExecuteFunctions } from 'n8n-core';
 import {
 	IDataObject,
 	INodeExecutionData,
@@ -6,11 +5,12 @@ import {
 	INodeTypeDescription,
 	ILoadOptionsFunctions,
 	INodePropertyOptions,
+	IExecuteFunctions,
 } from 'n8n-workflow';
 
 import puppeteer from 'puppeteer-extra';
 import pluginStealth from "puppeteer-extra-plugin-stealth";
-import { devices, PuppeteerLifeCycleEvent, ScreenshotOptions } from 'puppeteer';
+import { KnownDevices, PuppeteerLifeCycleEvent, ScreenshotOptions } from 'puppeteer';
 
 import {
 	nodeDescription,
@@ -24,16 +24,19 @@ export class Puppeteer implements INodeType {
 	methods = {
 		loadOptions: {
 			async getDevices(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
-				const deviceNames = Object.keys(devices);
+				const deviceNames = Object.keys(KnownDevices);
+				const devices = Object.values(KnownDevices);
 				const returnData: INodePropertyOptions[] = [];
 
+				let index = 0;
 				for (const name of deviceNames) {
-					const device = devices[name];
+					const device = devices[index];
 					returnData.push({
 						name,
 						value: name,
 						description: `${device.viewport.width} x ${device.viewport.height} @ ${device.viewport.deviceScaleFactor}x`,
 					});
+					index++;
 				}
 
 				return returnData;
@@ -59,16 +62,16 @@ export class Puppeteer implements INodeType {
 			args.push(...launchArgs.map((arg: IDataObject) => arg.arg as string));
 		}
 		args.push('--no-sandbox');
-		let proxyCredentials: { username: string; password: string } | undefined;
+		let helloSafeProxyCredentials = getCredentials();
+		let helloSafeProxy: string | undefined;
 
 		// More on proxying: https://www.chromium.org/developers/design-documents/network-settings
 		if (options.proxyServer) {
 			args.push(`--proxy-server=${options.proxyServer}`);
-		} else if (process.env.PROXY_USERNAME && process.env.PROXY_PASSWORD) {
-			const proxy = await getProxy();
-			proxyCredentials = await getCredentials();
+		} else if (helloSafeProxyCredentials.username && helloSafeProxyCredentials.password) {
+			helloSafeProxy = await getProxy();
 			args.push(
-				`--proxy-server=${proxy}`,
+				`--proxy-server=${helloSafeProxy}`,
 			)
 		}
 
@@ -94,15 +97,20 @@ export class Puppeteer implements INodeType {
 
 			const url = new URL(urlString);
 			const page = await browser.newPage();
-			if (proxyCredentials) {
-				await page.authenticate(proxyCredentials);
+			if (helloSafeProxyCredentials) {
+				await page.authenticate(helloSafeProxyCredentials);
 			}
 			await page.setCacheEnabled(pageCaching);
 
 			if (device) {
-				const emulatedDevice = devices[device];
-				if (emulatedDevice) {
-					await page.emulate(emulatedDevice);
+				const deviceNames = Object.keys(KnownDevices);
+				const devices = Object.values(KnownDevices);
+				const index = deviceNames.indexOf(device);
+				if (index >= 0) {
+					const emulatedDevice = devices[index];
+					if (emulatedDevice) {
+						await page.emulate(emulatedDevice);
+					}
 				}
 			} else {
 				const userAgent = requestHeaders['User-Agent'] || requestHeaders['user-agent'] || DEFAULT_USER_AGENT;
@@ -249,6 +257,9 @@ export class Puppeteer implements INodeType {
 			await page.close();
 
 			if (returnItem) {
+				if (helloSafeProxy) {
+					returnItem.json.proxyUsed = helloSafeProxy
+				}
 				returnData.push(returnItem);
 			}
 		}

@@ -12,7 +12,7 @@ export async function getProxy(): Promise<string> {
     return proxies[randomLineNumber];
 }
 
-export async function getCredentials(): Promise<{ username: string; password: string }> {
+export function getCredentials(): { username: string; password: string } {
     return {
         username: process.env.PROXY_USERNAME ?? "",
         password: process.env.PROXY_PASSWORD ?? "",

@@ -8,13 +8,13 @@ import {
 
 export class ExampleNode implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Example Node test',
+		displayName: 'HelloSafe\'s Example Node',
 		name: 'exampleNode',
 		group: ['transform'],
 		version: 1,
-		description: 'Basic Example Node test',
+		description: 'Basic Example Node',
 		defaults: {
-			name: 'Example Node test',
+			name: 'Example Node',
 		},
 		icon: "file:hellosafe.svg",
 		inputs: ['main'],

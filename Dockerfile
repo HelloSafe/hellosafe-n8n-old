@@ -31,9 +31,6 @@ RUN apk --no-cache add --virtual fonts msttcorefonts-installer fontconfig && \
 	find  /usr/share/fonts/truetype/msttcorefonts/ -type l -exec unlink {} \; \
 	&& rm -rf /tmp/* /var/cache/apk/*
 
-RUN npm install -g nodemon typescript
-RUN npm install -g puppeteer puppeteer-extra puppeteer-extra-plugin-stealth 
-
 COPY ./ /root
 
 WORKDIR /root

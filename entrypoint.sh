@@ -39,6 +39,7 @@ if [ "$NODE_ENV" == "production" ]; then
   export DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED=false
   n8n
 else
+  npm install -g nodemon
   nodemon --watch /root/.n8n/custom --exec n8n start
 fi
 

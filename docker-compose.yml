@@ -31,7 +31,7 @@ services:
         env_file:
             - .env
         volumes:
-            - 'hellosafe-n8n-postgres-2:/var/lib/postgresql/data'
+            - 'hellosafe-n8n-postgres:/var/lib/postgresql/data'
         networks:
             - hellosafe-n8n-network
         healthcheck:
@@ -42,5 +42,5 @@ networks:
     hellosafe-n8n-network:
         driver: bridge
 volumes:
-    hellosafe-n8n-postgres-2:
+    hellosafe-n8n-postgres:
         driver: local
