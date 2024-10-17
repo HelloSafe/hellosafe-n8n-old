@@ -36,6 +36,5 @@ COPY ./ /root
 WORKDIR /root
 
 RUN npm install && npm run build && mkdir /root/.n8n && cp -R /root/dist /root/.n8n/custom 
-RUN cd /root/.n8n/custom && npm install
 
 CMD ["/entrypoint.sh"]
