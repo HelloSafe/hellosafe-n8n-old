@@ -15,7 +15,7 @@ import {
 
 export class HealthInsuranceSwitzerland implements INodeType {
   description: INodeTypeDescription = {
-    displayName: "HealthInsuranceSwitzerland",
+    displayName: "HelloSafe\'s HealthInsuranceSwitzerland",
     name: "HealthInsuranceSwitzerland",
     group: ["transform"],
     version: 1,
