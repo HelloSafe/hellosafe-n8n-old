@@ -93,7 +93,7 @@ export class HealthInsuranceSwitzerland implements INodeType {
       headers: { apiKey: apiKey, Authorization: `Bearer ${apiKey}` },
     });
 
-    let json: { [key: string]: any } = {};
+    const json: { [key: string]: any } = {};
     for (let name of outputList[0]) {
       if (name.includes("price") && !name.includes("priceSubtitle")) {
         let index_info = find_ofsp_match(name, sheet);

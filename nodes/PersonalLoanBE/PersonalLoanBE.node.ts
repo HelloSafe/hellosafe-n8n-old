@@ -67,7 +67,7 @@ export class PersonalLoanBE implements INodeType {
       return monthly * duration - amount;
     }
 
-    let json: { [key: string]: any } = {};
+    const json: { [key: string]: any } = {};
 
     response.data.forEach((item: any) => {
       amount = item.amount;
@@ -83,7 +83,7 @@ export class PersonalLoanBE implements INodeType {
         item.amount
       );
       outputList.forEach((offer: string) => {
-        if (offer.toLocaleLowerCase().replace(/\'/g, "").includes(item.name.toLocaleLowerCase().replace(/\'/g, ""))) {
+        if (offer.toLocaleLowerCase().replace(/\s/g, "").includes(item.name.toLocaleLowerCase().replace(/\s/g, ""))) {
           if (offer.includes("feature1")) {
             json[offer] = (item.rate * 100).toFixed(2) + " %";
           } else if (offer.includes("feature2")) {
