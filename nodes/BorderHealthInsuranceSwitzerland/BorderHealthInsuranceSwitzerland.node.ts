@@ -6,17 +6,17 @@ import {
 } from "n8n-workflow";
 
 import {
-  accessSpreadsheet,
   find_ofsp_match,
   find_region_code,
   get_price,
   outputList,
   settings,
 } from "./utils";
+import { accessSpreadsheet } from "../../srcs/utils/accessSpreadsheet";
 
 export class BorderHealthInsuranceSwitzerland implements INodeType {
   description: INodeTypeDescription = {
-    displayName: "HelloSafe Border Health Insurance",
+    displayName: "HelloSafe Border Health Insurance Switzerland",
     name: "BorderHealthInsuranceSwitzerland",
     group: ["transform"],
     version: 1,
@@ -53,7 +53,7 @@ export class BorderHealthInsuranceSwitzerland implements INodeType {
 
     const outputItems: INodeExecutionData[] = [];
 
-    const spreadSheet = await accessSpreadsheet();
+    const spreadSheet = await accessSpreadsheet('1QbuYpRlCEk37o1nYc08rX2Na2OM3rXac6jfaQSi8sWU');
 
     const codesTable = spreadSheet.sheetsById[1544244057];
     const codesTableRows = await codesTable.getRows();
