@@ -58,7 +58,7 @@ export class HealthInsuranceSwitzerland implements INodeType {
     const outputItems: INodeExecutionData[] = [];
 
     let spreadSheet = await loadSpeadsheetInfo(
-      "1mHOPog6kosRTqRwkCjOiY1xGrcr_QLZRTdFLh1a4Xmo"
+      "1mHOPog6kosRTqRwkCjOiY1xGrcr_QLZRTdFLh1a4Xmo", ['postal', 'ofsp_index_2025', ]
     );
     const postalSheetRows = spreadSheet["postal"];
     const postalCodeRow = postalSheetRows.filter((row: any) => {

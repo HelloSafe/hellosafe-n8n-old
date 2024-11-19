@@ -33,16 +33,11 @@ export function createStructFromSheet(array: any) {
 }
 
 // Load the spreadsheet
-export async function loadSpeadsheetInfo(spreadsheetId: string) {
+export async function loadSpeadsheetInfo(spreadsheetId: string, rangesInput: string[]) {
   const sheets = google.sheets({ version: "v4", auth: serviceAccountAuth });
-  const spreadsheet = await sheets.spreadsheets.get({ spreadsheetId });
-
-  const sheetNames = spreadsheet.data?.sheets?.map(
-    (sheet: any) => sheet.properties.title
-  );
 
   // Creating the range for the batch request, loop on all sheet, asking rang
-  const ranges = sheetNames?.map((sheetName) => `${sheetName}!A:Z`);
+  const ranges = rangesInput?.map((sheetName) => `${sheetName}!A:Z`);
 
   const response = await sheets.spreadsheets.values.batchGet({
     spreadsheetId,
@@ -52,9 +47,9 @@ export async function loadSpeadsheetInfo(spreadsheetId: string) {
   const res: any = {};
 
   // Create our reponse looping on the batch response
-  sheetNames?.map((name, i) => {
-    const buff = (response?.data.valueRanges ?? [])[i];
-    res[name] = createStructFromSheet(buff.values);
+  const sheetsArray = response?.data?.valueRanges ?? [];
+  sheetsArray.map((buff, i) => {
+    res[rangesInput[i]] = createStructFromSheet(buff.values);
   });
   return res;
 }
