@@ -1,57 +1,32 @@
-import { JWT } from "google-auth-library";
-import { GoogleSpreadsheet, GoogleSpreadsheetRow } from "google-spreadsheet";
-
-export async function accessSpreadsheet() {
-  const credentials = JSON.parse(
-    process.env.SPREADSHEET_API_CREDENTIALS ?? ""
-  ) as Credentials;
-  const serviceAccountAuth = new JWT({
-    email: credentials?.client_email,
-    key: credentials?.private_key,
-    scopes: [
-      "https://www.googleapis.com/auth/spreadsheets",
-      "https://www.googleapis.com/auth/drive.file",
-    ],
-  });
-
-  const doc = new GoogleSpreadsheet(
-    "1mHOPog6kosRTqRwkCjOiY1xGrcr_QLZRTdFLh1a4Xmo",
-    serviceAccountAuth
-  );
-
-  await doc.loadInfo(); // loads document properties and worksheets
-  return doc;
-}
-
-export function find_ofsp_match(
+export function findOfspMatch(
   name: string,
-  ofsp_raws: GoogleSpreadsheetRow<Record<string, any>>[]
+  ofspRows: any
 ) {
-  for (let ofsp_raw of ofsp_raws) {
-    let insurer_name = new RegExp(
-      "^" + ofsp_raw.get("insurer_name").toLowerCase().replace(/\s/g, ""),
+  for (let ofspRow of ofspRows) {
+    let insurerName = new RegExp(
+      "^" + ofspRow['insurer_name'].toLowerCase().replace(/\s/g, ""),
       "i"
     );
     if (
       name
         .toLowerCase()
-        .includes(ofsp_raw.get("contract").toLowerCase().replace(/\s/g, "")) &&
-      insurer_name.test(name.toLowerCase())
+        .includes(ofspRow['contract'].toLowerCase().replace(/\s/g, "")) &&
+      insurerName.test(name.toLowerCase())
     ) {
       return {
-        code: ofsp_raw.get("ofsp_code"),
-        rate_class: ofsp_raw.get("rate_class"),
+        code: ofspRow['ofsp_code'],
+        rate_class: ofspRow['rate_class'],
       };
     }
   }
   return { code: 0 };
 }
 
-export function get_prime_from_supabase(index_info: any, supabaseRaw: any) {
+export function getPrimeFromSupabase(indexInfo: any, supabaseRaw: any) {
   for (let raw of supabaseRaw) {
     if (
-      raw.rate_class === index_info.rate_class &&
-      raw.ofsp_code === index_info.code.toString().padStart(4, "0")
+      raw.rate_class === indexInfo.rate_class &&
+      raw.ofsp_code === indexInfo.code.toString().padStart(4, "0")
     ) {
       return raw.prime;
     }

@@ -41,6 +41,7 @@
     "gapi": "^0.0.3",
     "google-auth-library": "^9.14.2",
     "google-spreadsheet": "^4.1.4",
+    "googleapis": "^144.0.0",
     "gulp": "^4.0.2",
     "n8n-core": "^1.11.2",
     "n8n-workflow": "^1.11.2",

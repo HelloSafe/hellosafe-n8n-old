@@ -5,17 +5,12 @@ import {
   INodeTypeDescription,
 } from "n8n-workflow";
 import axios from "axios";
-import {
-  accessSpreadsheet,
-  find_ofsp_match,
-  get_prime_from_supabase,
-  outputList,
-  settings,
-} from "./utils";
+import { findOfspMatch, getPrimeFromSupabase, outputList, settings } from "./utils";
+import { loadSpeadsheetInfo } from "../../srcs/utils/accessSpreadsheet";
 
 export class HealthInsuranceSwitzerland implements INodeType {
   description: INodeTypeDescription = {
-    displayName: "HelloSafe\'s HealthInsuranceSwitzerland",
+    displayName: "HelloSafe's HealthInsuranceSwitzerland",
     name: "healthInsuranceSwitzerland",
     group: ["transform"],
     version: 1,
@@ -62,18 +57,17 @@ export class HealthInsuranceSwitzerland implements INodeType {
 
     const outputItems: INodeExecutionData[] = [];
 
-    let spreadSheet = await accessSpreadsheet();
-    const postalSheet = spreadSheet.sheetsById[455146918];
-    const postalSheetRows = await postalSheet.getRows();
-    const postalCodeRaw = postalSheetRows.filter((row, i) => {
-      return row.get("postal") == postalCode;
+    let spreadSheet = await loadSpeadsheetInfo(
+      "1mHOPog6kosRTqRwkCjOiY1xGrcr_QLZRTdFLh1a4Xmo"
+    );
+    const postalSheetRows = spreadSheet["postal"];
+    const postalCodeRow = postalSheetRows.filter((row: any) => {
+      return row["postal"] == postalCode;
     });
 
     const apiKey = process.env.SUPABASE_CLIENT_ANON_KEY ?? "";
-    const sheet = await spreadSheet.sheetsById[
-      (settings as any).ofspIndexGoogleSheetTabId[language]
-    ].getRows();
-    const canton = postalCodeRaw[0].get("canton");
+    const sheet = spreadSheet["ofsp_index_2025"];
+    const canton = postalCodeRow[0]["canton"];
 
     let url: string =
       `https://pnbpasamidjpaqxsprtm.supabase.co/rest/v1/${supabasePrimeIndexTable}?select=*` +
@@ -96,9 +90,9 @@ export class HealthInsuranceSwitzerland implements INodeType {
     const json: { [key: string]: any } = {};
     for (let name of outputList[0]) {
       if (name.includes("price") && !name.includes("priceSubtitle")) {
-        let index_info = find_ofsp_match(name, sheet);
-        if (index_info.code != 0) {
-          let price = get_prime_from_supabase(index_info, response.data);
+        let indexInfo = findOfspMatch(name, sheet);
+        if (indexInfo.code != 0) {
+          let price = getPrimeFromSupabase(indexInfo, response.data);
           if (price != 0) {
             if (version === "$") {
               const offersWithPrices = outputList[0].filter((output) => {
@@ -108,9 +102,9 @@ export class HealthInsuranceSwitzerland implements INodeType {
                 ) {
                   return false;
                 }
-                const index_info = find_ofsp_match(output, sheet);
-                if (index_info.code != 0) {
-                  price = get_prime_from_supabase(index_info, response.data);
+                const indexInfo = findOfspMatch(output, sheet);
+                if (indexInfo.code != 0) {
+                  price = getPrimeFromSupabase(indexInfo, response.data);
                   if (price != 0) {
                     return true;
                   }
@@ -123,8 +117,8 @@ export class HealthInsuranceSwitzerland implements INodeType {
 
               const index = response.data.findIndex(
                 (el: any) =>
-                  el.ofsp_code == index_info.code &&
-                  el.rate_class == index_info.rate_class
+                  el.ofsp_code == indexInfo.code &&
+                  el.rate_class == indexInfo.rate_class
               );
               const repeatTimes = Math.floor(index / quartile) + 1;
               json[name] = "$".repeat(repeatTimes > 4 ? 4 : repeatTimes);

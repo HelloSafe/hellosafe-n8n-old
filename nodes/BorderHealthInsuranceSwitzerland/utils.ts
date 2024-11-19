@@ -1,5 +1,3 @@
-import { GoogleSpreadsheetRow } from "google-spreadsheet";
-
 export function replaceSpecialWithNormal(input: string) {
   // Normalize the string to separate base letters from diacritics
   let normalized = input.normalize("NFD");
@@ -9,50 +7,45 @@ export function replaceSpecialWithNormal(input: string) {
 }
 
 // Function to get the region code on the region sheet : https://docs.google.com/spreadsheets/d/1QbuYpRlCEk37o1nYc08rX2Na2OM3rXac6jfaQSi8sWU/edit?gid=1544244057#gid=1544244057
-export function find_region_code(
-  region_name: string,
-  regions_row: GoogleSpreadsheetRow<Record<string, any>>[]
+export function findRegionCode(
+  regionName: string,
+  regionsRow: any,
 ) {
-  const matching_row = regions_row.filter(
-    (row) =>
-      row.get("correspondance_fr") === region_name ||
-      row.get("correspondance_de") === region_name
-  );
-  return matching_row[0].get("code");
+  return regionsRow.filter((row: any) => row['correspondance_fr'] === regionName || row['correspondance_de'] === regionName)[0]['code'];
 }
 
 // Function to get the price from all information we have : https://docs.google.com/spreadsheets/d/1QbuYpRlCEk37o1nYc08rX2Na2OM3rXac6jfaQSi8sWU/edit?gid=1074982097#gid=1074982097
 
-export function get_price(
-  ofsp_code: string,
-  location_code: string,
-  accident_code: string,
-  age_code: string,
-  prices_rows: GoogleSpreadsheetRow<Record<string, any>>[]
+export function getPrice(
+  ofspCode: string,
+  locationCode: string,
+  accidentCode: string,
+  ageCode: string,
+  pricesRows: any,
 ) {
-  const matching_row = prices_rows.filter(
-    (row) =>
-      row.get("ofsp_code") === ofsp_code &&
-      row.get("location_code") === location_code &&
-      row.get("age_code") === age_code &&
-      row.get("accident_code") === accident_code
+  const matchingRow = pricesRows.filter(
+    (row: any) =>
+      row['ofsp_code'] === ofspCode &&
+      row['location_code'] === locationCode &&
+      row['age_code'] === ageCode &&
+      row['accident_code'] === accidentCode
   );
-  if (matching_row[0]) {
-    return `${parseInt(matching_row[0].get('price')).toFixed(2).toString()} CHF`;
+  if (matchingRow[0]) {
+    return `${parseInt(matchingRow[0]['price']).toFixed(2).toString().replace('.', ',')} CHF`;
   } else {
     return "A.C";
   }
 }
 
-export function find_ofsp_match(
+export function findOfspMatch(
   name: string,
-  ofsp_rows: GoogleSpreadsheetRow<Record<string, any>>[]
+  ofspRows: any,
 ) {
-  for (let ofsp_raw of ofsp_rows) {
-    let insurer_name = ofsp_raw.get("insurer_name")?.toLowerCase().replace(/\s/g, "");
-    if (name.toLowerCase().replace(/\s/g, "").includes(replaceSpecialWithNormal(insurer_name))) {
+  for (let ofspRaw of ofspRows) {
+    let insurerName = ofspRaw['insurer_name']?.toLowerCase().replace(/\s/g, "");
+    if (name.toLowerCase().replace(/\s/g, "").includes(replaceSpecialWithNormal(insurerName))) {
       return {
-        code: ofsp_raw.get("ofsp_code"),
+        code: ofspRaw['ofsp_code'],
       };
     }
   }
