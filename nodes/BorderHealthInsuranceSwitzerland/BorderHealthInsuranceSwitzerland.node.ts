@@ -6,13 +6,13 @@ import {
 } from "n8n-workflow";
 
 import {
-  find_ofsp_match,
-  find_region_code,
-  get_price,
+  findOfspMatch,
+  findRegionCode,
+  getPrice,
   outputList,
   settings,
 } from "./utils";
-import { accessSpreadsheet } from "../../srcs/utils/accessSpreadsheet";
+import { loadSpeadsheetInfo } from "../../srcs/utils/accessSpreadsheet";
 
 export class BorderHealthInsuranceSwitzerland implements INodeType {
   description: INodeTypeDescription = {
@@ -44,6 +44,7 @@ export class BorderHealthInsuranceSwitzerland implements INodeType {
       ageCode = settings.ageCodesCorrespondingToAgeSelections[indexOfAge];
     }
 
+
     let coverCode = "OHN-UNF";
     if (inputs?.accidentCover == "true") {
       coverCode = "MIT-UNF";
@@ -53,27 +54,16 @@ export class BorderHealthInsuranceSwitzerland implements INodeType {
 
     const outputItems: INodeExecutionData[] = [];
 
-    const spreadSheet = await accessSpreadsheet('1QbuYpRlCEk37o1nYc08rX2Na2OM3rXac6jfaQSi8sWU');
-
-    const codesTable = spreadSheet.sheetsById[1544244057];
-    const codesTableRows = await codesTable.getRows();
-
-    const location_code = find_region_code(location, codesTableRows)
-
-    const ofsp_code_sheet = spreadSheet.sheetsById[1984756530];
-    const ofsp_code_raw = await ofsp_code_sheet.getRows();
-
-    
+    const sheets: any = await loadSpeadsheetInfo('1QbuYpRlCEk37o1nYc08rX2Na2OM3rXac6jfaQSi8sWU', ['prices', 'codes_table', 'ofsp_index']);
+    const locationCode = findRegionCode(location, sheets['codes_table'])
 
     const json: { [key: string]: any } = {};
 
     for (let name of outputList) {
       if (name.includes("price") && !name.includes("priceSubtitle")) {
-        let index_info = find_ofsp_match(name, ofsp_code_raw);
-        if (index_info.code != 0) {
-          const price_sheet =  spreadSheet.sheetsById[1074982097];
-          const price_sheet_rows = await price_sheet.getRows();
-          json[name] = get_price(index_info.code, location_code, coverCode, ageCode, price_sheet_rows);
+        let indexInfo = findOfspMatch(name, sheets['ofsp_index']);
+        if (indexInfo.code != 0) {
+          json[name] = getPrice(indexInfo.code, locationCode, coverCode, ageCode, sheets['prices']);
         }
       }
     }
