@@ -68,12 +68,6 @@ export class HostpitalInsuranceBE implements INodeType {
         ) {
           if (name.includes("price") && !name.includes("priceSubtitle")) {
             if (json[name] != undefined) {
-              console.log(
-                formalizeString(name).split("_")[0],
-                formalizeString(row["name"] + row["logoSubtitle"]),
-                name,
-                row["price"]
-              );
               let val1 = parseFloat(json[name].replace(/,/g, ".")).toFixed(2);
               let val2 = parseFloat(row["price"].replace(/,/g, ".")).toFixed(2);
               if (val2 < val1) {
