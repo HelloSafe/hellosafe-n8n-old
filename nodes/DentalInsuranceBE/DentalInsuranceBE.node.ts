@@ -5,7 +5,8 @@ import {
   INodeTypeDescription,
 } from "n8n-workflow";
 import { loadSpeadsheetInfo } from "../../srcs/utils/accessSpreadsheet";
-import { formalize } from "./utils";
+import formalizeString from "../../srcs/utils/formalizeString";
+import getRowsMatchingAge from "../../srcs/utils/getRowsMatchingAge";
 
 export class DentalInsuranceBE implements INodeType {
   description: INodeTypeDescription = {
@@ -33,7 +34,9 @@ export class DentalInsuranceBE implements INodeType {
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
     const items = this.getInputData();
     const inputs = items[0]?.json.body as any;
-    const outputList = (this.getNodeParameter("output", 0) as string).split(", ");
+    const outputList = (this.getNodeParameter("output", 0) as string).split(
+      ", "
+    );
 
     const nl_province = ["Vlaanderen", "Brussel", "Wallonië"];
 
@@ -55,30 +58,22 @@ export class DentalInsuranceBE implements INodeType {
       ["prices"]
     );
 
-    const priceRows = spreadSheet['prices'];
-    const filteredRows = priceRows.filter((row: any) => {
-        const range = row['age'];
-        const minMax = range.split("-");
-
-        const min = parseInt(minMax[0]);
-        const max = parseInt(minMax[1]); 
-        if (age <= max && age >= min) {
-            return row;
-        }
-    })
-
+    const filteredRows = getRowsMatchingAge(spreadSheet["prices"], age, "age");
     const json: any = {};
 
-   for (let name of outputList) {
-    if (name.includes("price") && !name.includes("priceSubtitle")) {
-        filteredRows.forEach((row:any) =>{
-            if (formalize(name).includes(formalize(row['insurance'] + row['formula']))) {
-                json[name] = row[province.toLowerCase()];
-            }
-        })
+    for (let name of outputList) {
+      if (name.includes("price") && !name.includes("priceSubtitle")) {
+        filteredRows.forEach((row: any) => {
+          if (
+            formalizeString(name).includes(
+              formalizeString(row["insurance"] + row["formula"])
+            )
+          ) {
+            json[name] = row[province.toLowerCase()];
+          }
+        });
+      }
     }
-   }
-    
 
     const outputItems: INodeExecutionData[] = [];
     outputItems.push({
