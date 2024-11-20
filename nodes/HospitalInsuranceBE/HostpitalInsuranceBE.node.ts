@@ -45,6 +45,7 @@ export class HostpitalInsuranceBE implements INodeType {
       "14GwCuDUNWbNKA2AakqMU-3u5IPxxEtT1vwIOLVxJ1CE",
       ["price_settings"]
     );
+    console.log(spreadSheet["price_settings"]);
 
     const matchingAgeRows = getRowsMatchingAge(
       spreadSheet["price_settings"],
@@ -62,11 +63,17 @@ export class HostpitalInsuranceBE implements INodeType {
       for (let name of outputList) {
         if (
           formalizeString(row["name"] + row["logoSubtitle"]).includes(
-            formalizeString(name).replace("newaypartners", "").split("_")[0]
+            formalizeString(name).split("_")[0]
           )
         ) {
           if (name.includes("price") && !name.includes("priceSubtitle")) {
             if (json[name] != undefined) {
+              console.log(
+                formalizeString(name).split("_")[0],
+                formalizeString(row["name"] + row["logoSubtitle"]),
+                name,
+                row["price"]
+              );
               let val1 = parseFloat(json[name].replace(/,/g, ".")).toFixed(2);
               let val2 = parseFloat(row["price"].replace(/,/g, ".")).toFixed(2);
               if (val2 < val1) {
