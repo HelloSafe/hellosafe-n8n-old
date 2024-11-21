@@ -1,7 +1,4 @@
 export function getMonthly(total: number, duration: number) {
-    console.log(total, total / (duration * 12), duration * 12, "DA");
-    const bruh = duration * 12;
-    console.log(total / bruh);
   return (total / (duration * 12)).toFixed(2);
 }
 
@@ -13,8 +10,6 @@ export function getRate(row: any) {
 }
 
 export function getTotal(amount: number, rate: number) {
-  console.log(rate / 100, "RATE");
-  console.log(amount, amount * (rate / 100));
   return amount + amount * (rate / 100);
 }
 
