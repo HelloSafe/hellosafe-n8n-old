@@ -5,7 +5,6 @@ import {
   INodeTypeDescription,
 } from "n8n-workflow";
 import axios from "axios";
-import { outputList } from "./utils";
 
 export class PersonalLoanBE implements INodeType {
   description: INodeTypeDescription = {
@@ -20,20 +19,29 @@ export class PersonalLoanBE implements INodeType {
     icon: "file:hellosafe.svg",
     inputs: ["main"],
     outputs: ["main"],
-    properties: [],
+    properties: [
+      {
+        displayName: "OutputList",
+        name: "output",
+        type: "string",
+        default: "",
+      },
+    ],
   };
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
     const outputItems: INodeExecutionData[] = [];
     const apiKey = process.env.SUPABASE_CLIENT_ANON_KEY ?? "";
 
+    const outputList = (this.getNodeParameter("output", 0) as string).split(
+      ", "
+    );
     const items = this.getInputData();
     const inputs = items[0]?.json.body as any;
     let amount = inputs.amount ? parseInt(inputs.amount) : 5000;
     let duration = inputs?.duration
       ? parseInt(inputs.duration.match(/\d+/))
       : 24;
-
 
     let url =
       "https://pnbpasamidjpaqxsprtm.supabase.co/rest/v1/data_pret_personel?select=*&amount=lte." +
@@ -83,7 +91,12 @@ export class PersonalLoanBE implements INodeType {
         item.amount
       );
       outputList.forEach((offer: string) => {
-        if (offer.toLocaleLowerCase().replace(/\s/g, "").includes(item.name.toLocaleLowerCase().replace(/\s/g, ""))) {
+        if (
+          offer
+            .toLocaleLowerCase()
+            .replace(/\s/g, "")
+            .includes(item.name.toLocaleLowerCase().replace(/\s/g, ""))
+        ) {
           if (offer.includes("feature1")) {
             json[offer] = (item.rate * 100).toFixed(2) + " %";
           } else if (offer.includes("feature2")) {
@@ -94,7 +107,6 @@ export class PersonalLoanBE implements INodeType {
         }
       });
     });
-
 
     outputItems.push({
       json,

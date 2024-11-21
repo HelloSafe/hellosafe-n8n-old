@@ -5,7 +5,7 @@ import {
   INodeTypeDescription,
 } from "n8n-workflow";
 import axios from "axios";
-import { findOfspMatch, getPrimeFromSupabase, outputList, settings } from "./utils";
+import { findOfspMatch, getPrimeFromSupabase, settings } from "./utils";
 import { loadSpeadsheetInfo } from "../../srcs/utils/accessSpreadsheet";
 
 export class HealthInsuranceSwitzerland implements INodeType {
@@ -21,11 +21,21 @@ export class HealthInsuranceSwitzerland implements INodeType {
     icon: "file:hellosafe.svg",
     inputs: ["main"],
     outputs: ["main"],
-    properties: [],
+    properties: [
+      {
+        displayName: "OutputList",
+        name: "output",
+        type: "string",
+        default: "",
+      },
+    ],
   };
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
     const items = this.getInputData();
+    const outputList = (this.getNodeParameter("output", 0) as string).split(
+      ", "
+    );
     const inputs = items[0]?.json.body as any;
     const locale = inputs?.locale ?? "fr-CH";
     const language = locale.split("-")[0];
@@ -88,14 +98,14 @@ export class HealthInsuranceSwitzerland implements INodeType {
     });
 
     const json: { [key: string]: any } = {};
-    for (let name of outputList[0]) {
+    for (let name of outputList) {
       if (name.includes("price") && !name.includes("priceSubtitle")) {
         let indexInfo = findOfspMatch(name, sheet);
         if (indexInfo.code != 0) {
           let price = getPrimeFromSupabase(indexInfo, response.data);
           if (price != 0) {
             if (version === "$") {
-              const offersWithPrices = outputList[0].filter((output) => {
+              const offersWithPrices = outputList.filter((output) => {
                 if (
                   !output.includes("price") ||
                   output.includes("priceSubtitle")

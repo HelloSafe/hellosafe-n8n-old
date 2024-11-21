@@ -4,7 +4,6 @@ import {
   INodeType,
   INodeTypeDescription,
 } from "n8n-workflow";
-import { outputList } from "./utils";
 import { loadSpeadsheetInfo } from "../../srcs/utils/accessSpreadsheet";
 
 export class MotoInsuranceBE implements INodeType {
@@ -20,7 +19,14 @@ export class MotoInsuranceBE implements INodeType {
     },
     inputs: ["main"],
     outputs: ["main"],
-    properties: [],
+    properties: [
+      {
+        displayName: "OutputList",
+        name: "output",
+        type: "string",
+        default: "",
+      },
+    ],
   };
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -29,6 +35,9 @@ export class MotoInsuranceBE implements INodeType {
     const inputs = items[0]?.json.body as any;
     const json: { [key: string]: any } = {};
 
+    const outputList = (this.getNodeParameter("output", 0) as string).split(
+      ", "
+    );
     const locale = inputs?.locale ?? "fr-BE";
     const type = inputs.type ?? "50 cc";
 
