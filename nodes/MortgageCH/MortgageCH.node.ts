@@ -54,6 +54,13 @@ export class MortgageCH implements INodeType {
     console.log(matchingRows);
     matchingRows.forEach((row: any) => {
       for (let name of outputList) {
+        //console.log(
+        //  formalizeString(name)
+        //    .split("_")[0]
+        //    .includes(formalizeString(row["Bank"])),
+        //  formalizeString(name).split("_")[0],
+        //  formalizeString(row["Bank"])
+        //);
         if (
           formalizeString(name)
             .split("_")[0]
@@ -67,16 +74,14 @@ export class MortgageCH implements INodeType {
             if (!rate) {
               json[name] = "NC";
             } else {
-              console.log(total, duration, "ICIII");
-              json[name] =
-                getMonthly(total, parseInt(duration)) + " CHF";
+              json[name] = getMonthly(total, parseInt(duration)) + " CHF";
             }
           } else if (name.includes("feature1")) {
             if (!rate) {
               json[name] = "NC";
             } else {
               // Interest
-              json[name] = roundToNearest05(interest) +  " CHF";
+              json[name] = roundToNearest05(interest) + " CHF";
             }
           } else if (name.includes("feature2")) {
             if (!rate) {
