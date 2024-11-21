@@ -42,31 +42,20 @@ export class MortgageCH implements INodeType {
 
     const spreadSheet = await loadSpeadsheetInfo(
       "165q46QsJ__i43jBUn0nw3EHN4Ofrr2X-NpeMsfA2fBY",
-      ["data"]
+      ["Rates"]
     );
 
-    const matchingRows = spreadSheet["data"].filter(
-      (row: any) => row["Duration"] === duration
-    );
-
+    const matchingRows = spreadSheet["Rates"];
     const json: any = {};
 
-    console.log(matchingRows);
     matchingRows.forEach((row: any) => {
       for (let name of outputList) {
-        //console.log(
-        //  formalizeString(name)
-        //    .split("_")[0]
-        //    .includes(formalizeString(row["Bank"])),
-        //  formalizeString(name).split("_")[0],
-        //  formalizeString(row["Bank"])
-        //);
         if (
           formalizeString(name)
             .split("_")[0]
             .includes(formalizeString(row["Bank"]))
         ) {
-          const rate = getRate(row);
+          const rate = getRate(row, duration.toString());
           const total = getTotal(amount, rate ?? 1.0);
           const interest = parseFloat((total - amount).toFixed(2));
           // Price
