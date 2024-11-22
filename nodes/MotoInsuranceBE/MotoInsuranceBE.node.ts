@@ -5,6 +5,7 @@ import {
   INodeTypeDescription,
 } from "n8n-workflow";
 import { loadSpeadsheetInfo } from "../../srcs/utils/accessSpreadsheet";
+import formalizeString from "../../srcs/utils/formalizeString";
 
 export class MotoInsuranceBE implements INodeType {
   description: INodeTypeDescription = {
@@ -47,7 +48,8 @@ export class MotoInsuranceBE implements INodeType {
 
     const sheetIds: any = { "fr-BE": "price", "nl-BE": "price NL" }; //fr, nl
     const spreadSheet: any = await loadSpeadsheetInfo(
-      "1Liyd4BNBtOGCDGzXRqTgCtN2DraiU4TzWa8TFsgrSWw", [sheetIds[locale]]
+      "1Liyd4BNBtOGCDGzXRqTgCtN2DraiU4TzWa8TFsgrSWw",
+      [sheetIds[locale]]
     );
     const priceSheetRow = spreadSheet[sheetIds[locale]];
     const headersValue = priceSheetRow[0];
@@ -58,16 +60,9 @@ export class MotoInsuranceBE implements INodeType {
     Object.entries(headersValue).forEach((offerName: any, index: number) => {
       for (let i = 0; i < outputList.length; i++) {
         const offerNameOptions = outputList[i];
-        const match = offerNameOptions
-          .toLocaleLowerCase()
-          .replace(/\s/g, "")
-          .replace(/[^a-zA-Z0-9 ]/g, "")
-          .includes(
-            offerName[1]
-              .toLocaleLowerCase()
-              .replace(/\s/g, "")
-              .replace(/[^a-zA-Z0-9 ]/g, "")
-          );
+        const match = formalizeString(offerNameOptions).includes(
+          formalizeString(offerName[1])
+        );
         if (match === true && offerNameOptions.includes("price")) {
           json[offerNameOptions] = priceList[0][offerName[1]];
           return;

@@ -37,7 +37,7 @@ export async function loadSpeadsheetInfo(spreadsheetId: string, rangesInput: str
   const sheets = google.sheets({ version: "v4", auth: serviceAccountAuth });
 
   // Creating the range for the batch request, loop on all sheet, asking rang
-  const ranges = rangesInput?.map((sheetName) => `${sheetName}!A:Z`);
+  const ranges = rangesInput?.map((sheetName) => `${sheetName}!A:ZZZ`);
 
   const response = await sheets.spreadsheets.values.batchGet({
     spreadsheetId,
