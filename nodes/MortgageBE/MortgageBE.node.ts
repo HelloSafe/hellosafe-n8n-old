@@ -35,6 +35,7 @@ export class MortgageBE implements INodeType {
   };
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+    // We get the inputs and set in the good format
     const items = this.getInputData();
     const inputs = items[0]?.json.body as any;
     const outputList = (this.getNodeParameter("output", 0) as string).split(
@@ -50,12 +51,15 @@ export class MortgageBE implements INodeType {
       "10G1YmwdawjYjkIIPLcBFQeLPKSTPQwP2C-lskvImArc",
       ["rates_BE NEW"]
     );
+
+    // Matching row on the duration filter value
     const matchingRows = spreadSheet["rates_BE NEW"].filter((row: any) => {
       return row["$duration"] === formatDuration(duration);
     });
 
     const json: any = {};
 
+    // Get the column values in Gsheet for each offer
     matchingRows.forEach((row: any) => {
       for (let name of outputList) {
         if (
