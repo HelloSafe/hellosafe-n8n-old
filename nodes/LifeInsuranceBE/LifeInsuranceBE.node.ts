@@ -30,6 +30,9 @@ export class LifeInsuranceBE implements INodeType {
       {
         displayName: "OutputList",
         name: "output",
+        typeOptions: {
+          rows: 5,
+        },
         type: "string",
         default: "",
       },
@@ -62,7 +65,7 @@ export class LifeInsuranceBE implements INodeType {
     }
 
     const spreadSheet = await loadSpeadsheetInfo(
-      "1wKzpc9UgEsYviU3WjmhOzbi-CDZWPuhVGTHOZYmeDkc",
+      "1EU91lIhEdPCvQ3uI4zw2gGqswRHtTc02zX6WMlu38XY",
       ["Rendements"]
     );
 
@@ -80,17 +83,16 @@ export class LifeInsuranceBE implements INodeType {
     for (let name of outputList) {
       if (name.includes("price") && !name.includes("priceSubtitle")) {
         filteredRows.forEach((row: any) => {
-          console.log(
-            formalizeString(name),
-            formalizeString(row["Assureur"]),
-            formalizeString(name).includes(formalizeString(row["Assureur"]))
-          );
-          if (
-            formalizeString(name).includes(formalizeString(row["Assureur"])) &&
-            // to avoid replace when value when they have the same name " part of it"
-            json[name] === undefined
-          ) {
-            json[name] = row[effiencyString];
+
+          // If c'est cas rendement de fond, dans la filterow, alors on check pour le insureur dans le name
+          const matchingCondition =  row['typeEpargne'] === "Fonds épargne pension" ? formalizeString(name).includes(formalizeString(row["Assureur"])) : formalizeString(name).includes(formalizeString(row["Assureur"]) + formalizeString(row['typeEpargne']));
+
+          console.log(row, name);
+          if (matchingCondition) {
+            json[name] = parseFloat(row[effiencyString].replace(',', '.')).toFixed(2).replace('.', ',') + " %";
+            if (row[effiencyString] === 'NC') {
+              json[name] = 'NC';
+            }
           }
         });
       }
@@ -104,3 +106,4 @@ export class LifeInsuranceBE implements INodeType {
     return this.prepareOutputData(outputItems);
   }
 }
+
