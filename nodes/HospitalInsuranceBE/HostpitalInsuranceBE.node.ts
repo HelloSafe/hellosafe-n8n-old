@@ -43,7 +43,7 @@ export class HostpitalInsuranceBE implements INodeType {
 
     const spreadSheet = await loadSpeadsheetInfo(
       "14GwCuDUNWbNKA2AakqMU-3u5IPxxEtT1vwIOLVxJ1CE",
-      ["price_settings"]
+      ["price_settings!A:H"]
     );
     console.log(spreadSheet["price_settings"]);
 

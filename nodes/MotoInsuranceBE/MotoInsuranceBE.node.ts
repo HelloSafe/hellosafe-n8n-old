@@ -34,7 +34,7 @@ export class MotoInsuranceBE implements INodeType {
 
     const sheetIds: any = { "fr-BE": "price", "nl-BE": "price NL" }; //fr, nl
     const spreadSheet: any = await loadSpeadsheetInfo(
-      "1Liyd4BNBtOGCDGzXRqTgCtN2DraiU4TzWa8TFsgrSWw", [sheetIds[locale]]
+      "1Liyd4BNBtOGCDGzXRqTgCtN2DraiU4TzWa8TFsgrSWw", [`${sheetIds[locale]}!A:AA`]
     );
     const priceSheetRow = spreadSheet[sheetIds[locale]];
     const headersValue = priceSheetRow[0];
