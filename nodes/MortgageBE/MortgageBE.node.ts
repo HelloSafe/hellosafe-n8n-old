@@ -27,6 +27,9 @@ export class MortgageBE implements INodeType {
         name: "output",
         type: "string",
         default: "",
+        typeOptions: {
+          rows: 5,
+        },
       },
     ],
   };
