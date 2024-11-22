@@ -5,7 +5,12 @@ import {
   INodeTypeDescription,
 } from "n8n-workflow";
 import axios from "axios";
-import { findOfspMatch, getPrimeFromSupabase, settings } from "./utils";
+import {
+  findOfspMatch,
+  getPrimeFromSupabase,
+  settings,
+  supabasePrimeIndexTable,
+} from "./utils";
 import { loadSpeadsheetInfo } from "../../srcs/utils/accessSpreadsheet";
 
 export class HealthInsuranceSwitzerland implements INodeType {
@@ -26,7 +31,11 @@ export class HealthInsuranceSwitzerland implements INodeType {
         displayName: "OutputList",
         name: "output",
         type: "string",
+        typeOptions: {
+          rows: 5,
+        },
         default: "",
+        required: true,
       },
     ],
   };
@@ -36,12 +45,15 @@ export class HealthInsuranceSwitzerland implements INodeType {
     const outputList = (this.getNodeParameter("output", 0) as string).split(
       ", "
     );
+
+    // We get the different input
     const inputs = items[0]?.json.body as any;
     const locale = inputs?.locale ?? "fr-CH";
     const language = locale.split("-")[0];
     const version = inputs?.version ?? "";
-    const supabasePrimeIndexTable = "assurance_maladie_ch_prime_index_2025";
+    let franchise = inputs?.franchise ?? "1000";
 
+    // We format them as needed in the sheet
     const age: any =
       inputs?.age ?? (settings as any)?.ageSelections[language][0];
     const indexOfAge = (settings as any)?.ageSelections[language].indexOf(age);
@@ -54,11 +66,11 @@ export class HealthInsuranceSwitzerland implements INodeType {
     if (inputs?.accidentCover == "true") {
       coverCode = "MIT-UNF";
     }
+
     const postal =
       inputs?.postalCode ?? (settings as any)?.defaultPostalCode[language];
     const postalCode = postal.split(" ")[1];
 
-    let franchise = inputs?.franchise ?? "1000";
     franchise = franchise.replace(/\s/g, "");
     franchise = parseInt(franchise.replace(/\'/g, ""));
     if (indexOfAge === 0) {
@@ -68,13 +80,18 @@ export class HealthInsuranceSwitzerland implements INodeType {
     const outputItems: INodeExecutionData[] = [];
 
     let spreadSheet = await loadSpeadsheetInfo(
-      "1mHOPog6kosRTqRwkCjOiY1xGrcr_QLZRTdFLh1a4Xmo", ['postal', 'ofsp_index_2025', ]
+      "1mHOPog6kosRTqRwkCjOiY1xGrcr_QLZRTdFLh1a4Xmo",
+      ["postal", "ofsp_index_2025"]
     );
+
+    // Getting the postalCode gSheet 'postal'
     const postalSheetRows = spreadSheet["postal"];
     const postalCodeRow = postalSheetRows.filter((row: any) => {
       return row["postal"] == postalCode;
     });
 
+
+    //Then we fetch supabase to get all offers pric matching the condition we already have -> Cover, Age, Region
     const apiKey = process.env.SUPABASE_CLIENT_ANON_KEY ?? "";
     const sheet = spreadSheet["ofsp_index_2025"];
     const canton = postalCodeRow[0]["canton"];
@@ -100,11 +117,18 @@ export class HealthInsuranceSwitzerland implements INodeType {
     const json: { [key: string]: any } = {};
     for (let name of outputList) {
       if (name.includes("price") && !name.includes("priceSubtitle")) {
+
+        // Here we get the ofsp_code form the gsheet 'ofsp_index_2025'
         let indexInfo = findOfspMatch(name, sheet);
         if (indexInfo.code != 0) {
+          // We get the price via the ofsp_code in the matching previous offer from supabase
           let price = getPrimeFromSupabase(indexInfo, response.data);
           if (price != 0) {
+
             if (version === "$") {
+
+              // We recall the loop for the "$" to get the number of mathcing offer
+              // because it need the length of matching offer, to represent by quartile
               const offersWithPrices = outputList.filter((output) => {
                 if (
                   !output.includes("price") ||

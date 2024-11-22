@@ -26,7 +26,11 @@ export class BorderHealthInsuranceSwitzerland implements INodeType {
         displayName: "OutputList",
         name: "output",
         type: "string",
+        typeOptions: {
+          rows: 5,
+        },
         default: "",
+        required: true,
       },
     ],
   };
@@ -40,6 +44,7 @@ export class BorderHealthInsuranceSwitzerland implements INodeType {
     const locale = inputs?.locale ?? "fr-CH";
     const language = locale.split("-")[0];
 
+    // We got the age from the inputs
     const age: any =
       inputs?.age ?? (settings as any)?.ageSelections[language][0];
     const indexOfAge = (settings as any)?.ageSelections[language].indexOf(age);
@@ -48,10 +53,12 @@ export class BorderHealthInsuranceSwitzerland implements INodeType {
       ageCode = settings.ageCodesCorrespondingToAgeSelections[indexOfAge];
     }
 
+    // We set the cover code, depending of the input
     let coverCode = "OHN-UNF";
     if (inputs?.accidentCover == "true") {
       coverCode = "MIT-UNF";
     }
+
     const location = inputs?.location ?? "";
 
     const outputItems: INodeExecutionData[] = [];
@@ -60,14 +67,20 @@ export class BorderHealthInsuranceSwitzerland implements INodeType {
       "1QbuYpRlCEk37o1nYc08rX2Na2OM3rXac6jfaQSi8sWU",
       ["prices", "codes_table", "ofsp_index"]
     );
+
+    // Find the corresponding Region Code in the sheet
     const locationCode = findRegionCode(location, sheets["codes_table"]);
 
     const json: { [key: string]: any } = {};
 
     for (let name of outputList) {
       if (name.includes("price") && !name.includes("priceSubtitle")) {
+
+        // Look for the ofsp code of the corresponding offer
         let indexInfo = findOfspMatch(name, sheets["ofsp_index"]);
         if (indexInfo.code != 0) {
+          
+          // From all information we have, we the the price a the corresponding row
           json[name] = getPrice(
             indexInfo.code,
             locationCode,

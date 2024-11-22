@@ -27,17 +27,22 @@ export class HostpitalInsuranceBE implements INodeType {
         name: "output",
         type: "string",
         default: "",
+        typeOptions: {
+          rows: 5,
+        },
+        required: true,
       },
     ],
   };
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+
+    // We get the input
     const items = this.getInputData();
     const inputs = items[0]?.json.body as any;
     const outputList = (this.getNodeParameter("output", 0) as string).split(
       ", "
     );
-
     const age = parseInt(inputs.age) ?? 30;
     const province = inputs.province ?? "Wallonie";
 
@@ -45,14 +50,16 @@ export class HostpitalInsuranceBE implements INodeType {
       "14GwCuDUNWbNKA2AakqMU-3u5IPxxEtT1vwIOLVxJ1CE",
       ["price_settings"]
     );
-    console.log(spreadSheet["price_settings"]);
 
+
+    // We filter the rows on age range
     const matchingAgeRows = getRowsMatchingAge(
       spreadSheet["price_settings"],
       age,
       "age"
     );
 
+    // Then on the province depending on the language
     const matchingFilterRows = matchingAgeRows.filter(
       (row) => row["province"] === province || row["provinceNL"] === province
     );
@@ -67,13 +74,10 @@ export class HostpitalInsuranceBE implements INodeType {
           )
         ) {
           if (name.includes("price") && !name.includes("priceSubtitle")) {
+
+            // Comparing if the price is the lowest or not
+
             if (json[name] != undefined) {
-              console.log(
-                formalizeString(name).split("_")[0],
-                formalizeString(row["name"] + row["logoSubtitle"]),
-                name,
-                row["price"]
-              );
               let val1 = parseFloat(json[name].replace(/,/g, ".")).toFixed(2);
               let val2 = parseFloat(row["price"].replace(/,/g, ".")).toFixed(2);
               if (val2 < val1) {
@@ -91,6 +95,7 @@ export class HostpitalInsuranceBE implements INodeType {
                   .replace(/\./g, ",") + " €";
             }
           } else if (name.includes("priceSubtitle")) {
+            // Fill the price subtitle
             if (inputs.locale === "nl-BE") {
               json[name] = row["priceSubtitleNL"];
             } else {

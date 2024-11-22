@@ -25,6 +25,10 @@ export class MotoInsuranceBE implements INodeType {
         name: "output",
         type: "string",
         default: "",
+        required: true,
+        typeOptions: {
+          rows: 5,
+        },
       },
     ],
   };

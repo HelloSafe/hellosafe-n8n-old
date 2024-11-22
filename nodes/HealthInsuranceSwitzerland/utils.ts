@@ -71,3 +71,4 @@ export const settings = {
       en: "Genève 1200",
     },
   };
+export const supabasePrimeIndexTable = "assurance_maladie_ch_prime_index_2025";
