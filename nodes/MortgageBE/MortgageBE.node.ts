@@ -49,11 +49,11 @@ export class MortgageBE implements INodeType {
 
     const spreadSheet = await loadSpeadsheetInfo(
       "10G1YmwdawjYjkIIPLcBFQeLPKSTPQwP2C-lskvImArc",
-      ["rates_BE NEW"]
+      ["rates_BE NEW!A:E"]
     );
 
     // Matching row on the duration filter value
-    const matchingRows = spreadSheet["rates_BE NEW"].filter((row: any) => {
+    const matchingRows = spreadSheet["rates_BE NEW!A:E"].filter((row: any) => {
       return row["$duration"] === formatDuration(duration);
     });
 
