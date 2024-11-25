@@ -5,7 +5,7 @@ import {
   INodeTypeDescription,
 } from "n8n-workflow";
 
-import { findOfspMatch, findRegionCode, getPrice, outputList, settings } from "./utils";
+import { findOfspMatch, findRegionCode, getPrice, settings } from "./utils";
 import { loadSpeadsheetInfo } from "../../srcs/utils/accessSpreadsheet";
 
 export class BorderHealthInsuranceSwitzerland implements INodeType {
@@ -29,7 +29,7 @@ export class BorderHealthInsuranceSwitzerland implements INodeType {
         typeOptions: {
           rows: 5,
         },
-        default: outputList,
+        default: "",
         required: true,
       },
     ],

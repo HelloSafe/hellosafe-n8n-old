@@ -5,7 +5,6 @@ import {
   INodeTypeDescription,
 } from "n8n-workflow";
 import axios from "axios";
-import { outputList } from "./utils";
 
 export class PersonalLoanBE implements INodeType {
   description: INodeTypeDescription = {
@@ -25,8 +24,7 @@ export class PersonalLoanBE implements INodeType {
         displayName: "OutputList",
         name: "output",
         type: "string",
-        // to reset to ""
-        default: outputList,
+        default: "",
         required: true,
         typeOptions: {
           rows: 5,

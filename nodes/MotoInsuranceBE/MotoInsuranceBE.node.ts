@@ -6,7 +6,6 @@ import {
 } from "n8n-workflow";
 import { loadSpeadsheetInfo } from "../../srcs/utils/accessSpreadsheet";
 import formalizeString from "../../srcs/utils/formalizeString";
-import { outputList } from "./utils";
 
 export class MotoInsuranceBE implements INodeType {
   description: INodeTypeDescription = {
@@ -26,8 +25,7 @@ export class MotoInsuranceBE implements INodeType {
         displayName: "OutputList",
         name: "output",
         type: "string",
-        //to reset to ""
-        default: outputList,
+        default: "",
         required: true,
         typeOptions: {
           rows: 5,

@@ -8,7 +8,6 @@ import axios from "axios";
 import {
   findOfspMatch,
   getPrimeFromSupabase,
-  outputList,
   settings,
   supabasePrimeIndexTable,
 } from "./utils";
@@ -36,7 +35,7 @@ export class HealthInsuranceSwitzerland implements INodeType {
           rows: 5,
         },
         // to reset to ""
-        default: outputList,
+        default: "",
         required: true,
       },
     ],
