@@ -1,14 +1,16 @@
 import {
   IExecuteFunctions,
   INodeExecutionData,
-  INodeType,
   INodeTypeDescription,
 } from "n8n-workflow";
 
-import { findOfspMatch, findRegionCode, getPrice, settings } from "./utils";
 import { loadSpeadsheetInfo } from "../../srcs/utils/accessSpreadsheet";
+import { parseInputs } from "./parseInput";
+import processData from "./processData";
+import prepareOutput from "./prepareOutput";
 
-export class BorderHealthInsuranceSwitzerland implements INodeType {
+export class BorderHealthInsuranceSwitzerland {
+
   description: INodeTypeDescription = {
     displayName: "HelloSafe Border Health Insurance Switzerland",
     name: "BorderHealthInsuranceSwitzerland",
@@ -26,59 +28,27 @@ export class BorderHealthInsuranceSwitzerland implements INodeType {
         displayName: "OutputList",
         name: "output",
         type: "string",
+        default: "",
         typeOptions: {
           rows: 5,
         },
-        default: "",
-        required: true,
       },
     ],
   };
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-    const items = this.getInputData();
+    const inputs = this.getInputData()[0]?.json.body as any;
     const outputList = (this.getNodeParameter("output", 0) as string).split(
       ", "
     );
-    const inputs = items[0]?.json.body as any;
-    const locale = inputs?.locale ?? "fr-CH";
-    const language = locale.split("-")[0];
+    const externalData: any = await loadSpeadsheetInfo(
+      "1QbuYpRlCEk37o1nYc08rX2Na2OM3rXac6jfaQSi8sWU",
+      ["prices!A:E", "codes_table!A:C", "ofsp_index!A:B"]
+    );
 
-    // We got the age from the inputs
-    const age: any =
-      inputs?.age ?? (settings as any)?.ageSelections[language][0];
-    const indexOfAge = (settings as any)?.ageSelections[language].indexOf(age);
-    let ageCode = settings.ageCodesCorrespondingToAgeSelections[1];
-    if (indexOfAge !== -1) {
-      ageCode = settings.ageCodesCorrespondingToAgeSelections[indexOfAge];
-    }
-
-    // We set the cover code, depending of the input
-    let coverCode = "OHN-UNF";
-    if (inputs?.accidentCover == "true") {
-      coverCode = "MIT-UNF";
-    }
-
-    const location = inputs?.location ?? "";
-
-    const outputItems: INodeExecutionData[] = [];
-
-    const sheets: any = await loadSpeadsheetInfo('1QbuYpRlCEk37o1nYc08rX2Na2OM3rXac6jfaQSi8sWU', ['prices!A:E', 'codes_table!A:C', 'ofsp_index!A:B']);
-    const locationCode = findRegionCode(location, sheets['codes_table!A:C'])
-
-    const json: { [key: string]: any } = {};
-
-    for (let name of outputList) {
-      if (name.includes("price") && !name.includes("priceSubtitle")) {
-        let indexInfo = findOfspMatch(name, sheets['ofsp_index!A:B']);
-        if (indexInfo.code != 0) {
-          json[name] = getPrice(indexInfo.code, locationCode, coverCode, ageCode, sheets['prices!A:E']);
-        }
-      }
-    }
-    outputItems.push({
-      json,
-    });
+    const parsedInputs = parseInputs(inputs);
+    const processedData = processData(parsedInputs, externalData);
+    const outputItems = prepareOutput(processedData, outputList);
 
     return this.prepareOutputData(outputItems);
   }

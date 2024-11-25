@@ -7,11 +7,12 @@ export function replaceSpecialWithNormal(input: string) {
 }
 
 // Function to get the region code on the region sheet : https://docs.google.com/spreadsheets/d/1QbuYpRlCEk37o1nYc08rX2Na2OM3rXac6jfaQSi8sWU/edit?gid=1544244057#gid=1544244057
-export function findRegionCode(
-  regionName: string,
-  regionsRow: any,
-) {
-  return regionsRow.filter((row: any) => row['correspondance_fr'] === regionName || row['correspondance_de'] === regionName)[0]['code'];
+export function findRegionCode(regionName: string, regionsRow: any) {
+  return regionsRow.filter(
+    (row: any) =>
+      row["correspondance_fr"] === regionName ||
+      row["correspondance_de"] === regionName
+  )[0]["code"];
 }
 
 // Function to get the price from all information we have : https://docs.google.com/spreadsheets/d/1QbuYpRlCEk37o1nYc08rX2Na2OM3rXac6jfaQSi8sWU/edit?gid=1074982097#gid=1074982097
@@ -21,31 +22,36 @@ export function getPrice(
   locationCode: string,
   accidentCode: string,
   ageCode: string,
-  pricesRows: any,
+  pricesRows: any
 ) {
   const matchingRow = pricesRows.filter(
     (row: any) =>
-      row['ofsp_code'] === ofspCode &&
-      row['location_code'] === locationCode &&
-      row['age_code'] === ageCode &&
-      row['accident_code'] === accidentCode
+      row["ofsp_code"] === ofspCode &&
+      row["location_code"] === locationCode &&
+      row["age_code"] === ageCode &&
+      row["accident_code"] === accidentCode
   );
   if (matchingRow[0]) {
-    return `${parseInt(matchingRow[0]['price']).toFixed(2).toString().replace('.', ',')} CHF`;
+    return `${parseInt(matchingRow[0]["price"])
+      .toFixed(2)
+      .toString()
+      .replace(".", ",")} CHF`;
   } else {
     return "A.C";
   }
 }
 
-export function findOfspMatch(
-  name: string,
-  ofspRows: any,
-) {
+export function findOfspMatch(name: string, ofspRows: any) {
   for (let ofspRaw of ofspRows) {
-    let insurerName = ofspRaw['insurer_name']?.toLowerCase().replace(/\s/g, "");
-    if (name.toLowerCase().replace(/\s/g, "").includes(replaceSpecialWithNormal(insurerName))) {
+    let insurerName = ofspRaw["insurer_name"]?.toLowerCase().replace(/\s/g, "");
+    if (
+      name
+        .toLowerCase()
+        .replace(/\s/g, "")
+        .includes(replaceSpecialWithNormal(insurerName))
+    ) {
       return {
-        code: ofspRaw['ofsp_code'],
+        code: ofspRaw["ofsp_code"],
       };
     }
   }
