@@ -48,13 +48,13 @@ export class HostpitalInsuranceBE implements INodeType {
 
     const spreadSheet = await loadSpeadsheetInfo(
       "14GwCuDUNWbNKA2AakqMU-3u5IPxxEtT1vwIOLVxJ1CE",
-      ["price_settings"]
+      ["price_settings!A:H"]
     );
 
 
     // We filter the rows on age range
     const matchingAgeRows = getRowsMatchingAge(
-      spreadSheet["price_settings"],
+      spreadSheet["price_settings!A:H"],
       age,
       "age"
     );

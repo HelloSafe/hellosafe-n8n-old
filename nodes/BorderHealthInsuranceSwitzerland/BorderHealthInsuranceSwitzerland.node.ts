@@ -63,31 +63,16 @@ export class BorderHealthInsuranceSwitzerland implements INodeType {
 
     const outputItems: INodeExecutionData[] = [];
 
-    const sheets: any = await loadSpeadsheetInfo(
-      "1QbuYpRlCEk37o1nYc08rX2Na2OM3rXac6jfaQSi8sWU",
-      ["prices", "codes_table", "ofsp_index"]
-    );
-
-    // Find the corresponding Region Code in the sheet
-    const locationCode = findRegionCode(location, sheets["codes_table"]);
+    const sheets: any = await loadSpeadsheetInfo('1QbuYpRlCEk37o1nYc08rX2Na2OM3rXac6jfaQSi8sWU', ['prices!A:E', 'codes_table!A:C', 'ofsp_index!A:B']);
+    const locationCode = findRegionCode(location, sheets['codes_table!A:C'])
 
     const json: { [key: string]: any } = {};
 
     for (let name of outputList) {
       if (name.includes("price") && !name.includes("priceSubtitle")) {
-
-        // Look for the ofsp code of the corresponding offer
-        let indexInfo = findOfspMatch(name, sheets["ofsp_index"]);
+        let indexInfo = findOfspMatch(name, sheets['ofsp_index!A:B']);
         if (indexInfo.code != 0) {
-          
-          // From all information we have, we the the price a the corresponding row
-          json[name] = getPrice(
-            indexInfo.code,
-            locationCode,
-            coverCode,
-            ageCode,
-            sheets["prices"]
-          );
+          json[name] = getPrice(indexInfo.code, locationCode, coverCode, ageCode, sheets['prices!A:E']);
         }
       }
     }

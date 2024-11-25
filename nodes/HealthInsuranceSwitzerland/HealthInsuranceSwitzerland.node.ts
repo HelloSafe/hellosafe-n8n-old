@@ -81,12 +81,9 @@ export class HealthInsuranceSwitzerland implements INodeType {
     const outputItems: INodeExecutionData[] = [];
 
     let spreadSheet = await loadSpeadsheetInfo(
-      "1mHOPog6kosRTqRwkCjOiY1xGrcr_QLZRTdFLh1a4Xmo",
-      ["postal", "ofsp_index_2025"]
+      "1mHOPog6kosRTqRwkCjOiY1xGrcr_QLZRTdFLh1a4Xmo", ['postal!A:C', 'ofsp_index_2025!A:D', ]
     );
-
-    // Getting the postalCode gSheet 'postal'
-    const postalSheetRows = spreadSheet["postal"];
+    const postalSheetRows = spreadSheet["postal!A:C"];
     const postalCodeRow = postalSheetRows.filter((row: any) => {
       return row["postal"] == postalCode;
     });
@@ -94,7 +91,7 @@ export class HealthInsuranceSwitzerland implements INodeType {
 
     //Then we fetch supabase to get all offers pric matching the condition we already have -> Cover, Age, Region
     const apiKey = process.env.SUPABASE_CLIENT_ANON_KEY ?? "";
-    const sheet = spreadSheet["ofsp_index_2025"];
+    const sheet = spreadSheet["ofsp_index_2025!A:D"];
     const canton = postalCodeRow[0]["canton"];
 
     let url: string =

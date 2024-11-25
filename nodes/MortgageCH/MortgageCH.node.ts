@@ -47,10 +47,10 @@ export class MortgageCH implements INodeType {
 
     const spreadSheet = await loadSpeadsheetInfo(
       "165q46QsJ__i43jBUn0nw3EHN4Ofrr2X-NpeMsfA2fBY",
-      ["Rates"]
+      ["Rates!A:Z"]
     );
 
-    const matchingRows = spreadSheet["Rates"];
+    const matchingRows = spreadSheet["Rates!A:Z"];
     const json: any = {};
 
     // Loop on the matching row, to fill offersInput
