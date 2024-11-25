@@ -5,8 +5,9 @@ import {
   INodeTypeDescription,
 } from "n8n-workflow";
 import { loadSpeadsheetInfo } from "../../srcs/utils/accessSpreadsheet";
-import formalizeString from "../../srcs/utils/formalizeString";
-import getRowsMatchingAge from "../../srcs/utils/getRowsMatchingAge";
+import { parseInput } from "./parseInput";
+import prepareOutput from "./prepareOutput";
+import { processData } from "./processData";
 
 export class DentalInsuranceBE implements INodeType {
   description: INodeTypeDescription = {
@@ -36,61 +37,20 @@ export class DentalInsuranceBE implements INodeType {
   };
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-    const items = this.getInputData();
-    const inputs = items[0]?.json.body as any;
+    const inputs = this.getInputData()[0]?.json.body as any;
     const outputList = (this.getNodeParameter("output", 0) as string).split(
       ", "
     );
-
-    const age = parseInt(inputs.age) ?? 30;
-
-    const nl_province = ["Vlaanderen", "Brussel", "Wallonië"];
-
-    const fr_province = ["Flandre", "Bruxelles", "Wallonie"];
-
-    let province = "";
-
-    // Setting the province name, as the one in the Gsheet, to be multi-language
-    if (nl_province.includes(inputs.province)) {
-      const idx = nl_province.indexOf(inputs.province);
-      province = fr_province[idx];
-    } else {
-      if (fr_province.includes(inputs.province)) {
-        province = inputs.province;
-      }
-    }
-
     const spreadSheet = await loadSpeadsheetInfo(
       "1oEfQKYKA49gTSNmWGI_nsuzaPs-MbP_4nbUI8xQVn10",
       ["prices!A:J"]
     );
 
-    const filteredRows = getRowsMatchingAge(spreadSheet["prices!A:J"], age, "age");
-    const json: any = {};
+    const parsedInputs = parseInput(inputs);
 
-    for (let name of outputList) {
+    const processedData = processData(parsedInputs, spreadSheet);
 
-      // To only fill the price corresponding result
-      if (name.includes("price") && !name.includes("priceSubtitle")) {
-        filteredRows.forEach((row: any) => {
-
-          // The matching current offer with the corresponding row in the sheet
-          if (
-            formalizeString(name).includes(
-              formalizeString(row["insurance"] + row["formula"])
-            )
-          ) {
-            
-            json[name] = row[province.toLowerCase()];
-          }
-        });
-      }
-    }
-
-    const outputItems: INodeExecutionData[] = [];
-    outputItems.push({
-      json,
-    });
+    const outputItems = prepareOutput(processedData, outputList);
 
     return this.prepareOutputData(outputItems);
   }
