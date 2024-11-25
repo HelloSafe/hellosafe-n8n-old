@@ -4,8 +4,9 @@ import {
   INodeType,
   INodeTypeDescription,
 } from "n8n-workflow";
-import { outputList } from "./utils";
 import { loadSpeadsheetInfo } from "../../srcs/utils/accessSpreadsheet";
+import formalizeString from "../../srcs/utils/formalizeString";
+import { outputList } from "./utils";
 
 export class MotoInsuranceBE implements INodeType {
   description: INodeTypeDescription = {
@@ -20,7 +21,19 @@ export class MotoInsuranceBE implements INodeType {
     },
     inputs: ["main"],
     outputs: ["main"],
-    properties: [],
+    properties: [
+      {
+        displayName: "OutputList",
+        name: "output",
+        type: "string",
+        //to reset to ""
+        default: outputList,
+        required: true,
+        typeOptions: {
+          rows: 5,
+        },
+      },
+    ],
   };
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -29,12 +42,16 @@ export class MotoInsuranceBE implements INodeType {
     const inputs = items[0]?.json.body as any;
     const json: { [key: string]: any } = {};
 
+    const outputList = (this.getNodeParameter("output", 0) as string).split(
+      ", "
+    );
     const locale = inputs?.locale ?? "fr-BE";
     const type = inputs.type ?? "50 cc";
 
     const sheetIds: any = { "fr-BE": "price", "nl-BE": "price NL" }; //fr, nl
     const spreadSheet: any = await loadSpeadsheetInfo(
-      "1Liyd4BNBtOGCDGzXRqTgCtN2DraiU4TzWa8TFsgrSWw", [sheetIds[locale]]
+      "1Liyd4BNBtOGCDGzXRqTgCtN2DraiU4TzWa8TFsgrSWw",
+      [sheetIds[locale]]
     );
     const priceSheetRow = spreadSheet[sheetIds[locale]];
     const headersValue = priceSheetRow[0];
@@ -45,16 +62,9 @@ export class MotoInsuranceBE implements INodeType {
     Object.entries(headersValue).forEach((offerName: any, index: number) => {
       for (let i = 0; i < outputList.length; i++) {
         const offerNameOptions = outputList[i];
-        const match = offerNameOptions
-          .toLocaleLowerCase()
-          .replace(/\s/g, "")
-          .replace(/[^a-zA-Z0-9 ]/g, "")
-          .includes(
-            offerName[1]
-              .toLocaleLowerCase()
-              .replace(/\s/g, "")
-              .replace(/[^a-zA-Z0-9 ]/g, "")
-          );
+        const match = formalizeString(offerNameOptions).includes(
+          formalizeString(offerName[1])
+        );
         if (match === true && offerNameOptions.includes("price")) {
           json[offerNameOptions] = priceList[0][offerName[1]];
           return;

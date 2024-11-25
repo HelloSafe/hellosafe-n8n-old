@@ -27,11 +27,16 @@ export class MortgageCH implements INodeType {
         name: "output",
         type: "string",
         default: "",
+        required: true,
+        typeOptions: {
+          rows: 5,
+        }, 
       },
     ],
   };
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+    // Taking the input
     const items = this.getInputData();
     const inputs = items[0]?.json.body as any;
     const outputList = (this.getNodeParameter("output", 0) as string).split(
@@ -48,6 +53,7 @@ export class MortgageCH implements INodeType {
     const matchingRows = spreadSheet["Rates"];
     const json: any = {};
 
+    // Loop on the matching row, to fill offersInput
     matchingRows.forEach((row: any) => {
       for (let name of outputList) {
         if (

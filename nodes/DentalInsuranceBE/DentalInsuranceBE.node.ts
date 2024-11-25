@@ -24,9 +24,13 @@ export class DentalInsuranceBE implements INodeType {
     properties: [
       {
         displayName: "OutputList",
+        typeOptions: {
+          rows: 5,
+        },
         name: "output",
         type: "string",
         default: "",
+        required: true,
       },
     ],
   };
@@ -38,12 +42,15 @@ export class DentalInsuranceBE implements INodeType {
       ", "
     );
 
+    const age = parseInt(inputs.age) ?? 30;
+
     const nl_province = ["Vlaanderen", "Brussel", "Wallonië"];
 
     const fr_province = ["Flandre", "Bruxelles", "Wallonie"];
 
     let province = "";
-    const age = parseInt(inputs.age) ?? 30;
+
+    // Setting the province name, as the one in the Gsheet, to be multi-language
     if (nl_province.includes(inputs.province)) {
       const idx = nl_province.indexOf(inputs.province);
       province = fr_province[idx];
@@ -58,17 +65,23 @@ export class DentalInsuranceBE implements INodeType {
       ["prices"]
     );
 
+    // We get filter to all row matching the age
     const filteredRows = getRowsMatchingAge(spreadSheet["prices"], age, "age");
     const json: any = {};
 
     for (let name of outputList) {
+
+      // To only fill the price corresponding result
       if (name.includes("price") && !name.includes("priceSubtitle")) {
         filteredRows.forEach((row: any) => {
+
+          // The matching current offer with the corresponding row in the sheet
           if (
             formalizeString(name).includes(
               formalizeString(row["insurance"] + row["formula"])
             )
           ) {
+            
             json[name] = row[province.toLowerCase()];
           }
         });
