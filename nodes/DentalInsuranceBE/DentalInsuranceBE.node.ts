@@ -58,7 +58,7 @@ export class DentalInsuranceBE implements INodeType {
       ["prices!A:J"]
     );
 
-    const filteredRows = getRowsMatchingAge(spreadSheet["prices"], age, "age");
+    const filteredRows = getRowsMatchingAge(spreadSheet["prices!A:J"], age, "age");
     const json: any = {};
 
     for (let name of outputList) {

@@ -45,10 +45,9 @@ export class HostpitalInsuranceBE implements INodeType {
       "14GwCuDUNWbNKA2AakqMU-3u5IPxxEtT1vwIOLVxJ1CE",
       ["price_settings!A:H"]
     );
-    console.log(spreadSheet["price_settings"]);
 
     const matchingAgeRows = getRowsMatchingAge(
-      spreadSheet["price_settings"],
+      spreadSheet["price_settings!A:H"],
       age,
       "age"
     );

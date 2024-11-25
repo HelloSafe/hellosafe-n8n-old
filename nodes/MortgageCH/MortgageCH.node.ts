@@ -45,7 +45,7 @@ export class MortgageCH implements INodeType {
       ["Rates!A:Z"]
     );
 
-    const matchingRows = spreadSheet["Rates"];
+    const matchingRows = spreadSheet["Rates!A:Z"];
     const json: any = {};
 
     matchingRows.forEach((row: any) => {

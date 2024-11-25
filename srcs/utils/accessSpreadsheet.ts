@@ -48,7 +48,8 @@ export async function loadSpeadsheetInfo(spreadsheetId: string, rangesInput: str
   // Create our reponse looping on the batch response
   const sheetsArray = response?.data?.valueRanges ?? [];
   sheetsArray.map((buff, i) => {
-    res[rangesInput[i].split("!")[0]] = createStructFromSheet(buff.values);
+    res[rangesInput[i]] = createStructFromSheet(buff.values);
   });
+
   return res;
 }

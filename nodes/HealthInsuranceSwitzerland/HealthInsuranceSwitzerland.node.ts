@@ -60,13 +60,13 @@ export class HealthInsuranceSwitzerland implements INodeType {
     let spreadSheet = await loadSpeadsheetInfo(
       "1mHOPog6kosRTqRwkCjOiY1xGrcr_QLZRTdFLh1a4Xmo", ['postal!A:C', 'ofsp_index_2025!A:D', ]
     );
-    const postalSheetRows = spreadSheet["postal"];
+    const postalSheetRows = spreadSheet["postal!A:C"];
     const postalCodeRow = postalSheetRows.filter((row: any) => {
       return row["postal"] == postalCode;
     });
 
     const apiKey = process.env.SUPABASE_CLIENT_ANON_KEY ?? "";
-    const sheet = spreadSheet["ofsp_index_2025"];
+    const sheet = spreadSheet["ofsp_index_2025!A:D"];
     const canton = postalCodeRow[0]["canton"];
 
     let url: string =
