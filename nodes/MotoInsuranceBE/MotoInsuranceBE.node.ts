@@ -5,8 +5,9 @@ import {
   INodeTypeDescription,
 } from "n8n-workflow";
 import { loadSpeadsheetInfo } from "../../srcs/utils/accessSpreadsheet";
-import formalizeString from "../../srcs/utils/formalizeString";
-import { outputList } from "./utils";
+import { parseInput } from "./parseInput";
+import { processData } from "./processData";
+import { prepareOutput } from "./prepareOutput";
 
 export class MotoInsuranceBE implements INodeType {
   description: INodeTypeDescription = {
@@ -26,8 +27,7 @@ export class MotoInsuranceBE implements INodeType {
         displayName: "OutputList",
         name: "output",
         type: "string",
-        //to reset to ""
-        default: outputList,
+        default: "",
         required: true,
         typeOptions: {
           rows: 5,
@@ -37,45 +37,22 @@ export class MotoInsuranceBE implements INodeType {
   };
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-    const items = this.getInputData();
-
-    const inputs = items[0]?.json.body as any;
-    const json: { [key: string]: any } = {};
+    const inputs = this.getInputData()[0]?.json.body as any;
 
     const outputList = (this.getNodeParameter("output", 0) as string).split(
       ", "
     );
-    const locale = inputs?.locale ?? "fr-BE";
-    const type = inputs.type ?? "50 cc";
 
-    const sheetIds: any = { "fr-BE": "price", "nl-BE": "price NL" }; //fr, nl
+    const parsedInput = parseInput(inputs);
+
     const spreadSheet: any = await loadSpeadsheetInfo(
       "1Liyd4BNBtOGCDGzXRqTgCtN2DraiU4TzWa8TFsgrSWw",
-      [sheetIds[locale]]
+      [`${parsedInput.sheetIds[parsedInput.locale]}!A:AA`]
     );
-    const priceSheetRow = spreadSheet[sheetIds[locale]];
-    const headersValue = priceSheetRow[0];
-    const priceList: any = priceSheetRow.filter((row: any, i: number) => {
-      return row["type"] == type;
-    });
+    const processedData = processData(parsedInput, spreadSheet);
 
-    Object.entries(headersValue).forEach((offerName: any, index: number) => {
-      for (let i = 0; i < outputList.length; i++) {
-        const offerNameOptions = outputList[i];
-        const match = formalizeString(offerNameOptions).includes(
-          formalizeString(offerName[1])
-        );
-        if (match === true && offerNameOptions.includes("price")) {
-          json[offerNameOptions] = priceList[0][offerName[1]];
-          return;
-        }
-      }
-    });
+    const outputItems = prepareOutput(processedData, outputList);
 
-    const outputItems: INodeExecutionData[] = [];
-    outputItems.push({
-      json,
-    });
     return this.prepareOutputData(outputItems);
   }
 }

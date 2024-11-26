@@ -5,8 +5,8 @@ import {
   INodeTypeDescription,
 } from "n8n-workflow";
 import { loadSpeadsheetInfo } from "../../srcs/utils/accessSpreadsheet";
-import formalizeString from "../../srcs/utils/formalizeString";
-import { getMonthly, getRate, getTotal, roundToNearest05 } from "./utils";
+import { parseInput } from "./parseInput";
+import { prepareOutput } from "./prepareOutput";
 
 export class MortgageCH implements INodeType {
   description: INodeTypeDescription = {
@@ -30,78 +30,27 @@ export class MortgageCH implements INodeType {
         required: true,
         typeOptions: {
           rows: 5,
-        }, 
+        },
       },
     ],
   };
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
     // Taking the input
-    const items = this.getInputData();
-    const inputs = items[0]?.json.body as any;
+    const inputs = this.getInputData()[0]?.json.body as any;
     const outputList = (this.getNodeParameter("output", 0) as string).split(
       ", "
     );
-    const duration = inputs.duration ?? "10";
-    const amount = parseInt(inputs.amount) ?? 20000;
+    const parsedInput = parseInput(inputs);
 
     const spreadSheet = await loadSpeadsheetInfo(
       "165q46QsJ__i43jBUn0nw3EHN4Ofrr2X-NpeMsfA2fBY",
-      ["Rates"]
+      ["Rates!A:Z"]
     );
 
-    const matchingRows = spreadSheet["Rates"];
-    const json: any = {};
-
-    // Loop on the matching row, to fill offersInput
-    matchingRows.forEach((row: any) => {
-      for (let name of outputList) {
-        if (
-          formalizeString(name)
-            .split("_")[0]
-            .includes(formalizeString(row["Bank"]))
-        ) {
-          const rate = getRate(row, duration.toString());
-          const total = getTotal(amount, rate ?? 1.0);
-          const interest = parseFloat((total - amount).toFixed(2));
-          // Price
-          if (name.includes("price") && !name.includes("priceSubtitle")) {
-            if (!rate) {
-              json[name] = "NC";
-            } else {
-              json[name] = getMonthly(total, parseInt(duration)) + " CHF";
-            }
-          } else if (name.includes("feature1")) {
-            if (!rate) {
-              json[name] = "NC";
-            } else {
-              // Interest
-              json[name] = roundToNearest05(interest) + " CHF";
-            }
-          } else if (name.includes("feature2")) {
-            if (!rate) {
-              json[name] = "NC";
-            } else {
-              // Total
-              json[name] = roundToNearest05(total) + " CHF";
-            }
-          } else if (name.includes("feature3")) {
-            if (!rate) {
-              json[name] = "NC";
-            } else {
-              // Rate
-              json[name] = rate.toString().replace(".", ",") + " %";
-            }
-          }
-        }
-      }
-    });
-
-    const outputItems: INodeExecutionData[] = [];
-    outputItems.push({
-      json,
-    });
-
+    const matchingRows = spreadSheet["Rates!A:Z"];
+    const processedData = { ...parsedInput, matchingRows: matchingRows };
+    const outputItems = prepareOutput(processedData, outputList);
     return this.prepareOutputData(outputItems);
   }
 }
