@@ -4,7 +4,6 @@ import { getInterest, getMonthly } from "./utils";
 export function prepareOutput(processedData: any, outputList: any) {
   const json: any = {};
 
-  console.log(processedData);
   // We loop on the offer, to fill parameters
   processedData.priceList.forEach((item: any) => {
     const monthlyValue = getMonthly(

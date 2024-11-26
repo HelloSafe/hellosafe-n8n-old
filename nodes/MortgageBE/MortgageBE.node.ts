@@ -49,7 +49,6 @@ export class MortgageBE implements INodeType {
 
     const parsedInput = parseInput(inputs);
     const processedData = processData(parsedInput, spreadSheet);
-    console.log(processedData);
     const outputItems = prepareOutput(processedData, outputList);
 
     return this.prepareOutputData(outputItems);
