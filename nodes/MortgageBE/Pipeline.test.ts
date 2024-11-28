@@ -1,6 +1,6 @@
 import Pipeline from "./Pipeline";
 
-describe("MyClass Tests", () => {
+describe("MortgageBE", () => {
   let instance: Pipeline;
 
   beforeEach(() => {
@@ -8,7 +8,7 @@ describe("MyClass Tests", () => {
     instance = new Pipeline();
   });
 
-  test("test output case 1", async () => {
+  test("it should pass with filter settings 1", async () => {
     const input = {
       duration: "15",
       amount: "200000",
@@ -119,7 +119,7 @@ describe("MyClass Tests", () => {
 
     expect(result[0].json).toStrictEqual(expectedOutput);
   });
-  test("test output case 2", async () => {
+  test("it should pass with filter settings 2", async () => {
     const input = {
       duration: "25",
       amount: "100000",
@@ -229,5 +229,15 @@ describe("MyClass Tests", () => {
     const result = await instance.execute(input, outputList);
 
     expect(result[0].json).toStrictEqual(expectedOutput);
+  });
+
+  test("it should fail with wrong input", async () => {
+    const input = {
+      amount: "100000",
+      type: "Fixe",
+      locale: "fr-BE",
+    };
+  
+    await expect(instance.execute(input, [])).rejects.toThrow("Wrong input");
   });
 });
