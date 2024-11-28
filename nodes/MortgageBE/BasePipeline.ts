@@ -19,12 +19,16 @@ export default abstract class BasePipeline<
     processedData: IProcessedData,
     outputList: string[]
   ): Promise<INodeExecutionData[]>;
+  abstract validate(input: any): boolean;
 
 
   async execute(
-    input: IInputType,
+    input: any,
     outputList: string[]
   ): Promise<INodeExecutionData[]> {
+    if (!this.validate(input)) {
+      throw new Error("Wrong input"); 
+    }
     const parsedInput = await this.parseInput(input);
     const processedData = await this.processData(parsedInput);
     const outputItems = await this.prepareOutput(processedData, outputList);
