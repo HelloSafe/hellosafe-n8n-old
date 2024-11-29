@@ -30,5 +30,8 @@
     "nodes/**/*.json",
     "package.json",
     "srcs/**/*"
+  ],
+  "exclude": [
+    "**/*.test.ts"
   ]
 }
