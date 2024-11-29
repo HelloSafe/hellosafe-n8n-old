@@ -1,9 +1,8 @@
 import { INodeExecutionData } from "n8n-workflow";
 
 export default abstract class BasePipeline<
-  IInputType,
-  IParsedInput,
-  IProcessedData
+  IInput,
+  IOutput
 > {
   constructor() {
     if (new.target === BasePipeline) {
@@ -11,27 +10,27 @@ export default abstract class BasePipeline<
     }
   }
 
-  abstract parseInput(input: IInputType): Promise<IParsedInput>;
+  abstract parse(input: any): Promise<IInput>;
 
-  abstract processData(input: IParsedInput): Promise<IProcessedData>;
+  abstract process(input: IInput): Promise<IOutput>;
 
-  abstract prepareOutput(
-    processedData: IProcessedData,
+  abstract prepare(
+    output: IOutput,
     outputList: string[]
   ): Promise<INodeExecutionData[]>;
   abstract validate(input: any): boolean;
 
 
   async execute(
-    input: any,
+    rawInput: any,
     outputList: string[]
   ): Promise<INodeExecutionData[]> {
+    const input = await this.parse(rawInput);
     if (!this.validate(input)) {
-      throw new Error("Wrong input"); 
+      throw new Error("Invalid input");
     }
-    const parsedInput = await this.parseInput(input);
-    const processedData = await this.processData(parsedInput);
-    const outputItems = await this.prepareOutput(processedData, outputList);
+    const output = await this.process(input);
+    const outputItems = await this.prepare(output, outputList);
     return outputItems;
   }
 }

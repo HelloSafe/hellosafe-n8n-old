@@ -34,13 +34,13 @@ export class MortgageBE implements INodeType {
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
     // We get the inputs and set in the good format
-    const inputs = this.getInputData()[0]?.json.body as any;
+    const rawInputs = this.getInputData()[0]?.json.body as any;
     const outputList = (this.getNodeParameter("output", 0) as string).split(
       ", "
     );
 
     const pipeline = new Pipeline();
-    const outputItems = await pipeline.execute(inputs, outputList);
+    const outputItems = await pipeline.execute(rawInputs, outputList);
 
     return this.prepareOutputData(outputItems);
   }

@@ -1,33 +1,29 @@
 import { INodeExecutionData } from "n8n-workflow";
-import IInputType from "./IInputType";
-import IParsedInput from "./IParsedInput";
-import IProcessedData from "./IProcessData";
-import parseInputMethod from "./parseInputMethod";
-import processDataMethod from "./processDataMethod";
-import prepareOutputMethod from "./prepareOutputMethod";
-import validate from "./validate";
 import BasePipeline from "../../srcs/interfaces/BasePipeline";
+import IInput from "./interfaces/IInput";
+import IProcessedData from "./interfaces/IProcessedData";
+import validate from "./validate";
+import parse from "./parse";
+import process from "./process";
+import prepare from "./prepare";
 
 export default class Pipeline extends BasePipeline<
-  IInputType,
-  IParsedInput,
+  IInput,
   IProcessedData
 > {
-  validate(input: any): boolean {
+  validate(input: IInput): boolean | never {
     return validate(input);
   }
-  async parseInput(inputs: IInputType): Promise<IParsedInput> {
-    return parseInputMethod(inputs);
+
+  async parse(rawInputs: any): Promise<IInput> {
+    return parse(rawInputs);
   }
 
-  async processData(input: IParsedInput): Promise<IProcessedData> {
-    return processDataMethod(input);
+  async process(input: IInput): Promise<IProcessedData> {
+    return process(input);
   }
 
-  async prepareOutput(
-    processedData: IProcessedData,
-    outputList: string[]
-  ): Promise<INodeExecutionData[]> {
-    return prepareOutputMethod(processedData, outputList);
+  async prepare(output: IProcessedData, outputList: string[]): Promise<INodeExecutionData[]> {
+    return prepare(output, outputList);
   }
 }
