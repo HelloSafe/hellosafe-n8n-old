@@ -4,7 +4,6 @@ import {
   INodeType,
   INodeTypeDescription,
 } from "n8n-workflow";
-import { loadSpeadsheetInfo } from "../../srcs/utils/accessSpreadsheet";
 import Pipeline from "./Pipeline";
 
 export class HostpitalInsuranceBE implements INodeType {
