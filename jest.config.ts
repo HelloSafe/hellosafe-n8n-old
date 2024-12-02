@@ -17,8 +17,8 @@ export default {
     moduleFileExtensions: ['ts', 'js'],
   
     // Coverage reports (optional)
-    collectCoverage: true,
-    coverageDirectory: 'coverage',
-    collectCoverageFrom: ['nodes/**/*.ts'],
+ //   collectCoverage: true,
+  //  coverageDirectory: 'coverage',
+   // collectCoverageFrom: ['nodes/**/*.ts'],
 
   };
