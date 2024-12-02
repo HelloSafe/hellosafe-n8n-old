@@ -28,4 +28,24 @@ describe("DentalInsuranceBE", () => {
 
     expect(result[0].json).toStrictEqual(expectedOutput);
   });
+  test("test wrong age", async () => {
+    const input = {
+      age: '101',
+      province: 'Wallonie',
+      spreadsheetId: "1oEfQKYKA49gTSNmWGI_nsuzaPs-MbP_4nbUI8xQVn10",
+      sheetName: "price_test_endpoint",
+    };
+    const outputList = [
+      "offer1_price",
+      "offer2_price",
+    ]
+
+    try {
+
+      await instance.execute(input, outputList);
+    } catch(e) {
+      expect(true);
+    }
+    expect(false);
+  });
 });
