@@ -36,16 +36,14 @@ export default async function prepare(
           outputName.includes("price") &&
           !outputName.includes("priceSubtitle")
         ) {
-          // Comparing if the price is the lowest or not
-
-          let rowValue = parseFloat(priceSettings.price.replace(/,/g, "."));
-          let buffer =
-            json[outputName] != undefined
-              ? parseFloat(json[outputName].replace(/,/g, "."))
-              : null;
-          if (!buffer || rowValue < buffer) {
+          // Checking if the matching row has the lower price
+          let previousMatchingPrice: boolean | number = json[outputName] !== undefined;
+          if (previousMatchingPrice) {
+            previousMatchingPrice =  parseFloat(json[outputName].replace(/,/g, "."));
+          }
+          if (!previousMatchingPrice || priceSettings.price < previousMatchingPrice) {
             json[outputName] = formatNumber(
-              rowValue,
+              priceSettings.price,
               data.locale,
               "",
               " €",

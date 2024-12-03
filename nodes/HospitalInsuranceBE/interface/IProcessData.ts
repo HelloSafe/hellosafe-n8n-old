@@ -2,7 +2,7 @@ export default interface IProcessedData {
     pricesRows: {
         name: string;
         logoSubtitle: string;
-        price: string;
+        price: number;
         priceSubtitle: string;
     }[];
     locale: string;

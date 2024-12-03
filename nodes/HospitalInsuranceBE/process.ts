@@ -18,7 +18,7 @@ export async function process(input: IInput) {
     return {
       name: row["name"],
       logoSubtitle: row["logoSubtitle"],
-      price: row["price"],
+      price: parseFloat(row["price"].replace(/,/g, ".")),
       priceSubtitle:
         input.locale === "fr-BE"
           ? row["priceSubtitle"]
