@@ -4,10 +4,7 @@ import {
   INodeType,
   INodeTypeDescription,
 } from "n8n-workflow";
-import { loadSpeadsheetInfo } from "../../srcs/utils/accessSpreadsheet";
-import { parseInput } from "./parseInput";
-import prepareOutput from "./prepareOutput";
-import { processData } from "./processData";
+import Pipeline from "./Pipeline";
 
 export class DentalInsuranceBE implements INodeType {
   description: INodeTypeDescription = {
@@ -41,16 +38,8 @@ export class DentalInsuranceBE implements INodeType {
     const outputList = (this.getNodeParameter("output", 0) as string).split(
       ", "
     );
-    const spreadSheet = await loadSpeadsheetInfo(
-      "1oEfQKYKA49gTSNmWGI_nsuzaPs-MbP_4nbUI8xQVn10",
-      ["prices!A:J"]
-    );
-
-    const parsedInputs = parseInput(inputs);
-
-    const processedData = processData(parsedInputs, spreadSheet);
-
-    const outputItems = prepareOutput(processedData, outputList);
+    const pipeline = new Pipeline();
+    const outputItems = await pipeline.execute(inputs, outputList);
 
     return this.prepareOutputData(outputItems);
   }
