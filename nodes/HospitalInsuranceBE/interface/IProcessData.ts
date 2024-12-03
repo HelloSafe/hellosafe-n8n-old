@@ -5,4 +5,5 @@ export default interface IProcessedData {
         price: string;
         priceSubtitle: string;
     }[];
+    locale: string;
 };

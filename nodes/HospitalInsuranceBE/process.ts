@@ -28,5 +28,6 @@ export async function process(input: IInput) {
 
   return {
     pricesRows,
+    locale: input.locale,
   };
 }

@@ -15,6 +15,7 @@
 import { INodeExecutionData } from "n8n-workflow";
 import IProcessedData from "./interface/IProcessData";
 import formalizeString from "../../srcs/utils/formalizeString";
+import { formatNumber } from "../../srcs/utils/formatNumber";
 
 export default async function prepare(
   data: IProcessedData,
@@ -37,26 +38,20 @@ export default async function prepare(
         ) {
           // Comparing if the price is the lowest or not
 
-          if (json[outputName] != undefined) {
-            let val1 = parseFloat(json[outputName].replace(/,/g, ".")).toFixed(
+          let rowValue = parseFloat(priceSettings.price.replace(/,/g, "."));
+          let buffer =
+            json[outputName] != undefined
+              ? parseFloat(json[outputName].replace(/,/g, "."))
+              : null;
+          if (!buffer || rowValue < buffer) {
+            json[outputName] = formatNumber(
+              rowValue,
+              data.locale,
+              "",
+              " €",
+              "NC",
               2
             );
-            let val2 = parseFloat(
-              priceSettings.price.replace(/,/g, ".")
-            ).toFixed(2);
-            if (val2 < val1) {
-              json[outputName] =
-                parseFloat(row["price"].replace(/,/g, "."))
-                  .toFixed(2)
-                  .toString()
-                  .replace(/\./g, ",") + " €";
-            }
-          } else {
-            json[outputName] =
-              parseFloat(priceSettings.price.replace(/,/g, "."))
-                .toFixed(2)
-                .toString()
-                .replace(/\./g, ",") + " €";
           }
         } else if (outputName.includes("priceSubtitle")) {
           // Fill the price subtitle
