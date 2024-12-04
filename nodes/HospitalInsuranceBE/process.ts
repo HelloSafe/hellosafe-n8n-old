@@ -8,10 +8,14 @@ export async function process(input: IInput) {
   ]);
 
   // We filter the rows on age range
-  const matchingAgeRows = getRowsMatchingAge(
+  let matchingAgeRows = getRowsMatchingAge(
     spreadSheet[input.sheetName],
     input.age,
     "age"
+  );
+
+  matchingAgeRows = matchingAgeRows.filter(
+    (row) => row["province"].toLowerCase() === input.province.toLowerCase()
   );
 
   const pricesRows = matchingAgeRows.map((row: any) => {

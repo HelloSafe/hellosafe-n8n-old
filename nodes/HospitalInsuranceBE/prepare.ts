@@ -23,7 +23,7 @@ export default async function prepare(
 ): Promise<INodeExecutionData[]> {
   const json: any = {};
 
-  data.pricesRows.forEach((row: any) => {
+  
     for (let outputName of outputList) {
       const outputNameFirstPart = formalizeString(outputName).split("_")[0];
       const priceSettings = data.pricesRows.find((row) =>
@@ -31,6 +31,7 @@ export default async function prepare(
           formalizeString(row.name + row.logoSubtitle)
         )
       );
+      
       if (priceSettings) {
         if (
           outputName.includes("price") &&
@@ -38,10 +39,10 @@ export default async function prepare(
         ) {
           // Checking if the matching row has the lower price
           let previousMatchingPrice: boolean | number = json[outputName] !== undefined;
-          if (!previousMatchingPrice) {
+          if (previousMatchingPrice) {
             previousMatchingPrice = parseFloat(json[outputName].replace(/,/g, "."));
           }
-          if (previousMatchingPrice || priceSettings.price < previousMatchingPrice) {
+          if (!previousMatchingPrice || priceSettings.price < previousMatchingPrice) {
             json[outputName] = formatNumber(
               priceSettings.price,
               data.locale,
@@ -57,7 +58,6 @@ export default async function prepare(
         }
       }
     }
-  });
 
   return [{ json }];
 }
