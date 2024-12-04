@@ -5,7 +5,6 @@ import IProcessedData from "./interface/IProcessData";
 import parse from "./parse";
 import { process } from "./process";
 import validate from "./validate";
-import prepare from "./prepare";
 
 export default class Pipeline extends BasePipeline<
   IInput,
@@ -24,6 +23,6 @@ export default class Pipeline extends BasePipeline<
   }
 
   async prepare(output: IProcessedData, outputList: string[]): Promise<INodeExecutionData[]> {
-    return prepare(output, outputList);
+    return this.prepare(output, outputList);
   }
 }
