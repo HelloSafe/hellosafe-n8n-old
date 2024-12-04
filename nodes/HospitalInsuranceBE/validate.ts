@@ -13,7 +13,7 @@ import IInput from "./interface/IInput";
  */
 export default function validate(input: IInput) {
   // Could be a parameter of the node
-    const province = ["brussel", "bruxelles", "flandre", "vlaanderen", "wallonie", "wallonië"];
+    const province = ["bruxelles", "flandre", "wallonie"];
   //validate if inputs are correct, if the combination of inputs is correct etc.
   if (input.locale !== "fr-BE" && input.locale !== "nl-BE") {
     throw new Error("This node only support language fr and nl for now");
@@ -22,7 +22,7 @@ export default function validate(input: IInput) {
     throw new Error("Age must be between 1 and 100");
   }
 
-  if (!province.includes(input.province)) {
+  if (!province.includes(input.province.toLocaleLowerCase())) {
     throw new Error("Wrong province input");
   }
   return true;
