@@ -38,10 +38,10 @@ export default async function prepare(
         ) {
           // Checking if the matching row has the lower price
           let previousMatchingPrice: boolean | number = json[outputName] !== undefined;
-          if (previousMatchingPrice) {
-            previousMatchingPrice =  parseFloat(json[outputName].replace(/,/g, "."));
+          if (!previousMatchingPrice) {
+            previousMatchingPrice = parseFloat(json[outputName].replace(/,/g, "."));
           }
-          if (!previousMatchingPrice || priceSettings.price < previousMatchingPrice) {
+          if (previousMatchingPrice || priceSettings.price < previousMatchingPrice) {
             json[outputName] = formatNumber(
               priceSettings.price,
               data.locale,
