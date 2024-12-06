@@ -8,7 +8,6 @@ export async function parse(rawInputs: any): Promise<IInput> {
   const sheetName = rawInputs.sheetName ?? "Rates!A:Z";
   const locale = rawInputs.locale.split("-")[0];
 
-  console.log(locale);
   return {
     duration: duration,
     amount: amount,

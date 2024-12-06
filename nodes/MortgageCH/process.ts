@@ -21,8 +21,6 @@ export default async function process(input: IInput): Promise<IProcessedData> {
     [input.sheetName]
   );
 
-  console.log(spreadSheet[input.sheetName], "matching row");
-
   const rateSettings = spreadSheet[input.sheetName].map((row: any) => {
     const rate = getRate(row, input.duration.toString());
     const total = getTotal(input.amount, rate ?? 1.0);
@@ -36,7 +34,7 @@ export default async function process(input: IInput): Promise<IProcessedData> {
       monthly
     }
   });
-  console.log(rateSettings);
+
   return {
     rateSettings,
     language: input.locale,
