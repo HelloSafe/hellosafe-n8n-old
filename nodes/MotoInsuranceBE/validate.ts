@@ -12,6 +12,5 @@ import IInput from "./interfaces/IInput";
  * @throws An error if any validation rule is violated.
  */
 export default function validate(input: IInput) {
-  console.log(input);
   return true;
 }

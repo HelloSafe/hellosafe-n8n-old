@@ -11,7 +11,6 @@ export async function parse(inputsRaw: any): Promise<IInput> {
 
     sheetName = sheetName + "!A:AA";
 
-    console.log("troubadour")
     return {
         spreadsheetId: spreadsheetId,
         sheetName: sheetName,
