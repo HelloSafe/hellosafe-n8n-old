@@ -1,23 +1,28 @@
 import { INodeExecutionData } from "n8n-workflow";
 import formalizeString from "../../srcs/utils/formalizeString";
+import IProcessedData from "./interfaces/IProcessedData";
 
-export function prepareOutput(processedData: any, outputList: any) {
+export async function prepare(
+  data: IProcessedData,
+  outputList: string[]
+): Promise<INodeExecutionData[]> {
   const json: any = {};
 
-  Object.entries(processedData.headersValue).forEach(
-    (offerName: any, index: number) => {
-      for (let i = 0; i < outputList.length; i++) {
-        const offerNameOptions = outputList[i];
-        const match = formalizeString(offerNameOptions).includes(
-          formalizeString(offerName[1])
-        );
-        if (match === true && offerNameOptions.includes("price")) {
-          json[offerNameOptions] = processedData.priceList[0][offerName[1]];
-          return;
-        }
+  for (let outputName of outputList) {
+    const outputNameFirstPart = formalizeString(outputName).split("_")[0];
+    const priceSetting = data.pricesSettings.find((pricesSetting) =>
+      outputNameFirstPart.includes(formalizeString(pricesSetting.name))
+    );
+    if (priceSetting) {
+      if (
+        outputName.includes("price") &&
+        !outputName.includes("priceSubtitle") &&
+        formalizeString(outputName).includes(priceSetting.name)
+      ) {
+        json[outputName] = priceSetting.price;
       }
     }
-  );
+  }
 
   const outputItems: INodeExecutionData[] = [];
   outputItems.push({

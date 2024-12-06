@@ -1,10 +1,6 @@
 export default interface IProcessedData {
-    language: string;
-    rateSettings: {
+    pricesSettings: { 
         name: string,
-        rate: number,
-        total: number,
-        interest: number,
-        monthly: number,
-    }[];
+        price: string,
+    }[]
 }
