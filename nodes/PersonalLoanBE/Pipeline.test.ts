@@ -1,9 +1,6 @@
 import Pipeline from "./Pipeline";
-/*
 
-It's on supabase, different way to test than google sheet ? 
-
-describe("MortgageBE", () => {
+describe("Persona Loan BE", () => {
   let instance: Pipeline;
 
   beforeEach(() => {
@@ -11,27 +8,63 @@ describe("MortgageBE", () => {
     instance = new Pipeline();
   });
 
-  test("it should pass with filter settings 1", async () => {
+  test("Basic test NL", async () => {
     const input = {
-      duration: "50000",
-      amount: "120 mois",
-      apiKey: process.env.SUPABASE_CLIENT_ANON_KEY ?? ""
+      duration: "24 maanden",
+      amount: "5000",
+      apiKey: process.env.SUPABASE_CLIENT_ANON_KEY ?? "",
     };
     const outputList = [
-      "offer1_feature1",
-      "offer1_feature2",
-      "offer1_feature3",
-    ]
+      "cofidis_feature1",
+      "cofidis_feature2",
+      "cofidis_feature3",
+      "cofidisMyline_feature1",
+      "cofidisMyline_feature2",
+      "cofidisMyline_feature3",
+    ];
 
     const expectedOutput = {
-      offer1_feature1: '',
-      offer1_feature2: '',
-      offer1_feature3: '',
+      cofidis_feature1: "8.99 %",
+      cofidis_feature2: "228.40 €",
+      cofidis_feature3: "481.62 €",
+      cofidisMyline_feature1: "8.99 %",
+      cofidisMyline_feature2: "228.40 €",
+      cofidisMyline_feature3: "481.62 €",
     };
 
     const result = await instance.execute(input, outputList);
 
     expect(result[0].json).toStrictEqual(expectedOutput);
   });
+
+  test("Basic test FR", async () => {
+    const input = {
+      duration: "24 mois",
+      amount: "5000",
+      apiKey: process.env.SUPABASE_CLIENT_ANON_KEY ?? "",
+    };
+
+    const outputList = [
+      "cofidis_feature1",
+      "cofidis_feature2",
+      "cofidis_feature3",
+      "cofidisMyline_feature1",
+      "cofidisMyline_feature2",
+      "cofidisMyline_feature3",
+    ];
+
+    const expectedOutput = {
+      cofidis_feature1: "8.99 %",
+      cofidis_feature2: "228.40 €",
+      cofidis_feature3: "481.62 €",
+      cofidisMyline_feature1: "8.99 %",
+      cofidisMyline_feature2: "228.40 €",
+      cofidisMyline_feature3: "481.62 €",
+    };
+
+    const result = await instance.execute(input, outputList);
+
+    expect(result[0].json).toStrictEqual(expectedOutput);
+  });
+
 });
-*/

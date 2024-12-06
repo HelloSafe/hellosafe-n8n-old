@@ -23,13 +23,13 @@ export async function prepare(
       ) {
         if (outputName.includes("feature1")) {
           // Rate
-          json[outputName] = (rateSetting.rate * 100).toFixed(2) + " %";
+          json[outputName] = rateSetting.rate;
         } else if (outputName.includes("feature2")) {
           // Monthly
-          json[outputName] = parseFloat(rateSetting.monthly.toFixed(2)) + " €";
+          json[outputName] = rateSetting.monthly;
         } else if (outputName.includes("feature3")) {
           // Interest
-          json[outputName] = parseFloat(rateSetting.interest.toFixed(2)) + " €";
+          json[outputName] = rateSetting.interest;
         }
       }
     }

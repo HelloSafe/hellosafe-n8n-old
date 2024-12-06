@@ -37,7 +37,11 @@ export async function process(input: IInput): Promise<IProcessedData> {
       row["amount"],
       row["durationSlider"]
     );
-    const interest = getInterest(monthly, row["durationSlide"], row["amount"]);
+    const interest = getInterest(
+      monthly,
+      parseInt(row["durationSlider"]),
+      parseInt(row["amount"])
+    );
     return {
       rate: (row["rate"] * 100).toFixed(2) + " %",
       monthly: monthly.toFixed(2) + " €",
