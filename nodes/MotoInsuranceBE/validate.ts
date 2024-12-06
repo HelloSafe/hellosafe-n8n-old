@@ -12,5 +12,9 @@ import IInput from "./interfaces/IInput";
  * @throws An error if any validation rule is violated.
  */
 export default function validate(input: IInput) {
-  return true;
+  const validType = ['50 cc', '125 cc', '1000 cc'];
+  if (!validType.includes(input.type)) {
+    throw new Error("Wrong type inpute");
+  }
+  return (true);
 }
