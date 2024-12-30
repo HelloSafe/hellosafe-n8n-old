@@ -1,11 +1,3 @@
-export function replaceSpecialWithNormal(input: string) {
-  // Normalize the string to separate base letters from diacritics
-  let normalized = input.normalize("NFD");
-  // Remove diacritics and other marks using a regular expression
-  let cleaned = normalized.replace(/[\u0300-\u036f]/g, "");
-  return cleaned;
-}
-
 // Function to get the region code on the region sheet : https://docs.google.com/spreadsheets/d/1QbuYpRlCEk37o1nYc08rX2Na2OM3rXac6jfaQSi8sWU/edit?gid=1544244057#gid=1544244057
 export function findRegionCode(regionName: string, regionsRow: any) {
   return regionsRow.filter(
@@ -39,23 +31,6 @@ export function getPrice(
   } else {
     return "A.C";
   }
-}
-
-export function findOfspMatch(name: string, ofspRows: any) {
-  for (let ofspRaw of ofspRows) {
-    let insurerName = ofspRaw["insurer_name"]?.toLowerCase().replace(/\s/g, "");
-    if (
-      name
-        .toLowerCase()
-        .replace(/\s/g, "")
-        .includes(replaceSpecialWithNormal(insurerName))
-    ) {
-      return {
-        code: ofspRaw["ofsp_code"],
-      };
-    }
-  }
-  return { code: 0 };
 }
 
 export const settings = {
