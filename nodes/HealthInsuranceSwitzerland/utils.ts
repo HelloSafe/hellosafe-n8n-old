@@ -1,34 +1,15 @@
-export function findOfspMatch(name: string, ofspRows: any) {
-  for (let ofspRow of ofspRows) {
-    let insurerName = new RegExp(
-      "^" + ofspRow["insurer_name"].toLowerCase().replace(/\s/g, ""),
-      "i"
-    );
-    if (
-      name
-        .toLowerCase()
-        .includes(ofspRow["contract"].toLowerCase().replace(/\s/g, "")) &&
-      insurerName.test(name.toLowerCase())
-    ) {
-      return {
-        code: ofspRow["ofsp_code"],
-        rate_class: ofspRow["rate_class"],
-      };
-    }
-  }
-  return { code: 0 };
-}
+import { ofsp } from "../../srcs/interfaces/IOfsp";
 
-export function getPrimeFromSupabase(indexInfo: any, supabaseRaw: any) {
+export function getPrimeFromSupabase(indexInfo: ofsp, supabaseRaw: any) {
   for (let raw of supabaseRaw) {
     if (
       raw.rate_class === indexInfo.rate_class &&
-      raw.ofsp_code === indexInfo.code.toString().padStart(4, "0")
+      raw.ofsp_code === indexInfo.ofsp_code.toString().padStart(4, "0")
     ) {
       return raw.prime;
     }
   }
-  return 0;
+  return '';
 }
 
 export const settings = {
