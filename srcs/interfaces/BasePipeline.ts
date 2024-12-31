@@ -18,6 +18,7 @@ export default abstract class BasePipeline<
     output: IOutput,
     outputList: string[]
   ): Promise<INodeExecutionData[]>;
+
   abstract validate(input: any): boolean;
 
 

@@ -11,6 +11,7 @@ import IInput from "./interfaces/IInput";
  * @returns `true` if the input is valid.
  * @throws An error if any validation rule is violated.
  */
+
 export default function validate(input: IInput) {
   const validType = ['50 cc', '125 cc', '1000 cc'];
   if (!validType.includes(input.type)) {

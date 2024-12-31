@@ -3,6 +3,18 @@ import IInput from "./interface/IInput";
 import IProcessedData from "./interface/IProcessedData";
 import { getInterest, getMonthly } from "./utils";
 
+/**
+ * Processes structured input data to calculate rates/prices/values/settings.
+ * 
+ * This function takes structured input, retrieves relevant data from an external 
+ * spreadsheet, and calculates rate settings based on input parameters. It returns 
+ * a processed object containing detailed financial calculations and metadata.
+ * 
+ * @param input - The structured input data to be processed.
+ * @returns A promise that resolves to the processed data object, including rate 
+ *          settings and other calculated information.
+ */
+
 export async function process(input: IInput): Promise<IProcessedData> {
   let url =
     "https://pnbpasamidjpaqxsprtm.supabase.co/rest/v1/data_pret_personel?select=*&amount=lte." +

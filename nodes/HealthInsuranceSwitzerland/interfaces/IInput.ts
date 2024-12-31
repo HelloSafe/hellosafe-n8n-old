@@ -5,7 +5,7 @@ export default interface IInput {
   franchise: string,
   locale: string,
   language: string,
-  version: string,
+  isDollarVersion: boolean;
   spreadsheetId: string,
   sheetPostal: string,
   sheetOFSP: string,

@@ -29,7 +29,7 @@ export default async function process(input: IInput): Promise<IProcessedData> {
   //Then we fetch supabase to get all offers pric matching the condition we already have -> Cover, Age, Region
   const apiKey = globalThis.process.env.SUPABASE_CLIENT_ANON_KEY ?? "";
   const ofsp_sheet = spreadSheet[input.sheetOFSP];
-  const data: ofsp[] = ofsp_sheet
+  const ofsp_data: ofsp[] = ofsp_sheet
     .filter((row: any) => row["ofsp_code"] !== "ofsp_code")
     .map((row: any) => {
       if (row["ofsp_code"] === "ofsp_code") {
@@ -65,7 +65,7 @@ export default async function process(input: IInput): Promise<IProcessedData> {
 
   const supabaseRows = await response.data;
 
-  const offersInfo = data
+  const offersInfo = ofsp_data
     .map((ofsp_info: ofsp) => {
       const price: string = getPrimeFromSupabase(ofsp_info, supabaseRows);
       return {
@@ -76,7 +76,7 @@ export default async function process(input: IInput): Promise<IProcessedData> {
     .filter((info) => !isNaN(info.price));
 
   return {
-    isDollarVersion: input.version === "$",
+    isDollarVersion: input.isDollarVersion,
     offersInfo: offersInfo,
   };
 }
