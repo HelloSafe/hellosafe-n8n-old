@@ -40,13 +40,13 @@ export const settings = {
     fr: 1564587363, //ofsp_index_2025
     de: 1564587363, //ofsp_index_2025
     it: 1564587363, //ofsp_index_2025
-    en: 1564587363,
+    en: 1564587363, //ofsp_index_2025
   },
   defaultPostalCode: {
-    fr: "Genève 1200",
-    de: "Genève 1200",
-    it: "Genève 1200",
-    en: "Genève 1200",
+    fr: "1200",
+    de: "1200",
+    it: "1200",
+    en: "1200",
   },
 };
 export const supabasePrimeIndexTable = "assurance_maladie_ch_prime_index_2025";

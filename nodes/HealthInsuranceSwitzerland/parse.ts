@@ -33,9 +33,8 @@ export default async function parse(rawInputs: any): Promise<IInput> {
     coverCode = "MIT-UNF";
   }
 
-  const postal =
+  const postalCode =
     rawInputs?.postalCode ?? (settings as any)?.defaultPostalCode[language];
-  const postalCode = postal.split(" ")[1];
 
   franchise = franchise.replace(/\s/g, "");
   franchise = parseInt(franchise.replace(/\'/g, ""));
